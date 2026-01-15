@@ -8,7 +8,7 @@ export const handleGetProducts: RequestHandler = (req, res) => {
       description:
         "Personalize your pet's collar with custom letters and charm shapes. Create a unique look for your furry friend!",
       price: 15.0,
-      image_url: "/placeholder.svg",
+      image_url: "/necklace.jpg",
       created_at: new Date("2025-01-01").toISOString(),
       updated_at: new Date("2025-01-01").toISOString(),
     },

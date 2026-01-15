@@ -127,9 +127,9 @@ export default function Index() {
               <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-orange-50 rounded-3xl"></div>
               <div className="relative h-full flex items-center justify-center p-8">
                 <img
-                  src="/placeholder.svg"
-                  alt="Dog with colorful pet collar"
-                  className="w-full h-full object-contain rounded-xl shadow-lg"
+                  src="/woman-with-dog.jpg"
+                  alt="Woman with French bulldog wearing personalized collar with DANDY and MOM letters"
+                  className="w-full h-full object-cover rounded-xl shadow-lg"
                 />
               </div>
             </div>
