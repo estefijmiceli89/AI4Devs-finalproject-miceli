@@ -61,14 +61,18 @@ export default function LoginPage() {
 
       <div className="max-w-md mx-auto px-4 py-12">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-light text-neutral-900 mb-2">Welcome Back</h1>
+          <h1 className="text-3xl font-light text-neutral-900 mb-2">
+            Welcome Back
+          </h1>
           <p className="text-neutral-600">Sign in to view your orders</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-neutral-900 mb-2">Email</label>
+            <label className="block text-sm font-medium text-neutral-900 mb-2">
+              Email
+            </label>
             <input
               type="email"
               required
@@ -84,7 +88,9 @@ export default function LoginPage() {
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-neutral-900 mb-2">Password</label>
+            <label className="block text-sm font-medium text-neutral-900 mb-2">
+              Password
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -102,7 +108,11 @@ export default function LoginPage() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
               >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
               </button>
             </div>
           </div>
@@ -129,7 +139,10 @@ export default function LoginPage() {
         <div className="text-center mt-6">
           <p className="text-neutral-600">
             Don't have an account?{" "}
-            <Link to="/register" className="text-amber-600 hover:text-amber-700 font-medium">
+            <Link
+              to="/register"
+              className="text-amber-600 hover:text-amber-700 font-medium"
+            >
               Sign up
             </Link>
           </p>
@@ -137,7 +150,10 @@ export default function LoginPage() {
 
         {/* Back Link */}
         <div className="text-center mt-4">
-          <Link to="/" className="text-sm text-neutral-500 hover:text-neutral-700">
+          <Link
+            to="/"
+            className="text-sm text-neutral-500 hover:text-neutral-700"
+          >
             ← Back to home
           </Link>
         </div>

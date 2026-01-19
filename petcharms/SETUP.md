@@ -9,7 +9,6 @@ Antes de comenzar, asegúrate de tener instalado:
 - **Node.js** (versión 18 o superior)
   - Verificar: `node --version`
   - Descargar: [nodejs.org](https://nodejs.org/)
-  
 - **pnpm** (gestor de paquetes)
   - Instalar: `npm install -g pnpm`
   - Verificar: `pnpm --version`
@@ -34,6 +33,7 @@ pnpm install
 ```
 
 Este comando instalará:
+
 - Dependencias del frontend (React, Vite, TailwindCSS, etc.)
 - Dependencias del backend (Express, Zod, etc.)
 - Dependencias de desarrollo (TypeScript, Vitest, etc.)
@@ -72,17 +72,20 @@ El proyecto usa **Supabase** como base de datos principal y para la autenticaci�
 - Las credenciales están configuradas en `client/lib/supabase.ts`
 
 **Tablas principales:**
+
 - `users` - Perfiles de usuarios
 - `orders` - Órdenes de clientes (con customizaciones)
 
 ### Almacenamiento de Datos
 
 **Órdenes y Usuarios:**
+
 - ✅ Las órdenes se almacenan **persistentemente** en Supabase
 - ✅ Los perfiles de usuario también en Supabase
 - ✅ **Totalmente persistente:** Los datos nunca se pierden
 
 **Datos de Productos/Charms:**
+
 - Los productos, charms, shapes y colores están **hardcodeados** en las rutas del servidor
 - Archivos: `server/routes/products.ts`, `server/routes/charms.ts`, `server/routes/shapes.ts`
 - 💡 **Sugerencia:** Estos también podrían migrarse a Supabase en el futuro
@@ -98,12 +101,14 @@ pnpm dev
 ```
 
 Este comando:
+
 - ✅ Inicia el servidor Vite (frontend) en el puerto **8080**
 - ✅ Inicia el servidor Express (backend) integrado
 - ✅ Habilita hot-reload para cambios en tiempo real
 - ✅ Sirve el frontend y la API en el mismo puerto
 
 **URLs disponibles:**
+
 - **Frontend:** http://localhost:8080
 - **API:** http://localhost:8080/api
 - **API Ping:** http://localhost:8080/api/ping
@@ -111,6 +116,7 @@ Este comando:
 ### Verificar que Funciona
 
 Abre tu navegador y visita:
+
 - http://localhost:8080 - Deberías ver la página principal de PetCharms
 
 O prueba la API desde la terminal:
@@ -166,20 +172,25 @@ pnpm format.fix       # Formatea código con Prettier
 ## 📡 Endpoints de la API
 
 ### Productos
+
 - `GET /api/v1/products` - Lista de productos (collares)
 
 ### Charms
+
 - `GET /api/v1/charms` - Lista de charms disponibles
 
 ### Shapes (Formas)
+
 - `GET /api/v1/shapes` - Lista de formas disponibles
 - `GET /api/v1/colors` - Lista de colores disponibles
 
 ### Órdenes
+
 - ✅ **Gestionadas directamente por Supabase** (no requieren API del servidor)
 - Las órdenes se crean y consultan directamente desde el frontend usando el cliente de Supabase
 
 ### Otros
+
 - `GET /api/ping` - Endpoint de prueba
 - `GET /api/demo` - Endpoint demo
 
@@ -190,6 +201,7 @@ pnpm format.fix       # Formatea código con Prettier
 **Error:** `Port 8080 is already in use`
 
 **Solución:**
+
 ```bash
 # Encontrar proceso usando el puerto 8080
 lsof -ti:8080
@@ -205,6 +217,7 @@ kill -9 $(lsof -ti:8080)
 **Error:** `pnpm: command not found`
 
 **Solución:**
+
 ```bash
 npm install -g pnpm
 ```
@@ -214,6 +227,7 @@ npm install -g pnpm
 **Error:** `Cannot find module '@shared/api'`
 
 **Solución:**
+
 ```bash
 # Verificar que los alias estén configurados en:
 # - vite.config.ts
@@ -227,6 +241,7 @@ pnpm install
 ### El frontend no carga
 
 **Verificar:**
+
 1. El servidor está corriendo: `curl http://localhost:8080/api/ping`
 2. No hay errores en la consola del navegador
 3. El puerto 8080 está disponible
@@ -240,18 +255,19 @@ Si quieres usar tu propia instancia de Supabase:
 3. Actualiza `client/lib/supabase.ts`:
 
 ```typescript
-const supabaseUrl = 'TU_SUPABASE_URL';
-const supabaseKey = 'TU_SUPABASE_KEY';
+const supabaseUrl = "TU_SUPABASE_URL";
+const supabaseKey = "TU_SUPABASE_KEY";
 ```
 
 O mejor aún, usa variables de entorno:
 
 ```typescript
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'URL_DEFAULT';
-const supabaseKey = import.meta.env.VITE_SUPABASE_KEY || 'KEY_DEFAULT';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "URL_DEFAULT";
+const supabaseKey = import.meta.env.VITE_SUPABASE_KEY || "KEY_DEFAULT";
 ```
 
 Y agrega al `.env`:
+
 ```env
 VITE_SUPABASE_URL=tu_url
 VITE_SUPABASE_KEY=tu_key
@@ -290,6 +306,3 @@ Si encuentras problemas:
 
 **Última actualización:** Enero 2025
 **Versión del proyecto:** 1.0.0
-
-
-

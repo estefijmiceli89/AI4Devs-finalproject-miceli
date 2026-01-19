@@ -27,13 +27,13 @@ interface Color {
 }
 
 interface LetterCharm {
-  type: 'letter';
+  type: "letter";
   letter: string;
   colorId: string;
 }
 
 interface ShapeCharm {
-  type: 'shape';
+  type: "shape";
   shapeId: string;
 }
 
@@ -124,14 +124,14 @@ export default function ProductPage() {
 
     if (upperValue.length === 0) {
       // Clearing pet name: remove all letter charms
-      updatedCharms = updatedCharms.filter((charm) => charm.type !== 'letter');
+      updatedCharms = updatedCharms.filter((charm) => charm.type !== "letter");
     } else if (upperValue.length > oldLetters.length) {
       // Appending letters: add new letters to the end
       const newLetters = upperValue.slice(oldLetters.length);
       const defaultColorId = colors[0]?.id || "color-orange";
       for (const letter of newLetters) {
         updatedCharms.push({
-          type: 'letter',
+          type: "letter",
           letter,
           colorId: defaultColorId,
         });
@@ -140,8 +140,12 @@ export default function ProductPage() {
       // Removing letters: remove from the end
       const lettersToRemove = oldLetters.length - upperValue.length;
       let removed = 0;
-      for (let i = updatedCharms.length - 1; i >= 0 && removed < lettersToRemove; i--) {
-        if (updatedCharms[i].type === 'letter') {
+      for (
+        let i = updatedCharms.length - 1;
+        i >= 0 && removed < lettersToRemove;
+        i--
+      ) {
+        if (updatedCharms[i].type === "letter") {
           updatedCharms.splice(i, 1);
           removed++;
         }
@@ -155,7 +159,7 @@ export default function ProductPage() {
   // Change color for specific letter charm
   const changeLetterColor = (charmIndex: number, colorId: string) => {
     const updated = [...charms];
-    if (updated[charmIndex].type === 'letter') {
+    if (updated[charmIndex].type === "letter") {
       updated[charmIndex].colorId = colorId;
       setCharms(updated);
     }
@@ -171,24 +175,23 @@ export default function ProductPage() {
       return;
     }
 
-    setCharms([
-      ...charms,
-      { type: 'shape', shapeId },
-    ]);
+    setCharms([...charms, { type: "shape", shapeId }]);
   };
 
   // Remove any charm by index
   const handleRemoveCharm = (index: number) => {
     const charm = charms[index];
-    if (charm.type === 'letter') {
+    if (charm.type === "letter") {
       // Also update pet name to remove this letter
-      const letterIndex = charms.slice(0, index).filter((c) => c.type === 'letter').length;
-      const newPetName = petName.slice(0, letterIndex) + petName.slice(letterIndex + 1);
+      const letterIndex = charms
+        .slice(0, index)
+        .filter((c) => c.type === "letter").length;
+      const newPetName =
+        petName.slice(0, letterIndex) + petName.slice(letterIndex + 1);
       setPetName(newPetName);
     }
     setCharms(charms.filter((_, i) => i !== index));
   };
-
 
   // Handle add to cart
   const handleAddToCart = () => {
@@ -197,16 +200,15 @@ export default function ProductPage() {
     if (charms.length === 0) {
       toast({
         title: "Add customizations",
-        description:
-          "Please add a pet name or shape charms to your collar.",
+        description: "Please add a pet name or shape charms to your collar.",
         variant: "destructive",
       });
       return;
     }
 
     // Extract letters and shapes from combined charms array
-    const letters = charms.filter((c) => c.type === 'letter') as LetterCharm[];
-    const shapes = charms.filter((c) => c.type === 'shape') as ShapeCharm[];
+    const letters = charms.filter((c) => c.type === "letter") as LetterCharm[];
+    const shapes = charms.filter((c) => c.type === "shape") as ShapeCharm[];
 
     const cartItem = {
       product_id: product.id,
@@ -293,7 +295,10 @@ export default function ProductPage() {
         </nav>
         <div className="text-center py-16">
           <p className="text-neutral-600 mb-4">Product not found</p>
-          <Link to="/" className="text-amber-600 hover:text-amber-700 font-medium">
+          <Link
+            to="/"
+            className="text-amber-600 hover:text-amber-700 font-medium"
+          >
             ← Back to home
           </Link>
         </div>
@@ -344,9 +349,9 @@ export default function ProductPage() {
                           <div
                             className="w-full h-8 rounded-full"
                             style={{
-                              backgroundColor: COLLAR_COLORS.find(
-                                (c) => c.id === collarColor
-                              )?.hex || "#F8A5A5",
+                              backgroundColor:
+                                COLLAR_COLORS.find((c) => c.id === collarColor)
+                                  ?.hex || "#F8A5A5",
                             }}
                           />
                         </div>
@@ -354,9 +359,9 @@ export default function ProductPage() {
                         {/* Charms Overlaid on Collar - In Insertion Order */}
                         <div className="flex flex-wrap items-center justify-center gap-2 relative z-10 px-3">
                           {charms.map((charm, idx) => {
-                            if (charm.type === 'letter') {
+                            if (charm.type === "letter") {
                               const color = colors.find(
-                                (c) => c.id === charm.colorId
+                                (c) => c.id === charm.colorId,
                               );
                               return (
                                 <span
@@ -373,7 +378,7 @@ export default function ProductPage() {
                               );
                             } else {
                               const shape = shapes.find(
-                                (s) => s.id === charm.shapeId
+                                (s) => s.id === charm.shapeId,
                               );
                               return (
                                 <div
@@ -397,7 +402,13 @@ export default function ProductPage() {
                         💡 Tip: Click on any charm to remove it
                       </p>
                       <p className="text-sm font-medium text-neutral-600">
-                        Collar Color: <span className="font-bold">{COLLAR_COLORS.find((c) => c.id === collarColor)?.name}</span>
+                        Collar Color:{" "}
+                        <span className="font-bold">
+                          {
+                            COLLAR_COLORS.find((c) => c.id === collarColor)
+                              ?.name
+                          }
+                        </span>
                       </p>
                       <p className="text-sm font-medium text-neutral-600">
                         Size: <span className="font-bold">{size}</span>
@@ -412,22 +423,32 @@ export default function ProductPage() {
 
               {/* Measurements Chart */}
               <div className="bg-white border-2 border-neutral-200 rounded-xl p-6 mt-8">
-                <h4 className="font-semibold text-neutral-900 mb-4 text-center">TABLA DE MEDIDAS</h4>
+                <h4 className="font-semibold text-neutral-900 mb-4 text-center">
+                  TABLA DE MEDIDAS
+                </h4>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center pb-3 border-b border-neutral-200">
-                    <span className="font-medium text-neutral-900">TALLA S:</span>
+                    <span className="font-medium text-neutral-900">
+                      TALLA S:
+                    </span>
                     <span className="text-neutral-600">25-40 cm</span>
                   </div>
                   <div className="flex justify-between items-center pb-3 border-b border-neutral-200">
-                    <span className="font-medium text-neutral-900">TALLA M:</span>
+                    <span className="font-medium text-neutral-900">
+                      TALLA M:
+                    </span>
                     <span className="text-neutral-600">35-46 cm</span>
                   </div>
                   <div className="flex justify-between items-center pb-3 border-b border-neutral-200">
-                    <span className="font-medium text-neutral-900">TALLA L:</span>
+                    <span className="font-medium text-neutral-900">
+                      TALLA L:
+                    </span>
                     <span className="text-neutral-600">40-56 cm</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="font-medium text-neutral-900">TALLA XL:</span>
+                    <span className="font-medium text-neutral-900">
+                      TALLA XL:
+                    </span>
                     <span className="text-neutral-600">50-66 cm</span>
                   </div>
                 </div>
@@ -520,10 +541,10 @@ export default function ProductPage() {
               />
 
               {/* Letter Color Picker */}
-              {charms.some((c) => c.type === 'letter') && (
+              {charms.some((c) => c.type === "letter") && (
                 <div className="space-y-2">
                   {charms.map((charm, idx) =>
-                    charm.type === 'letter' ? (
+                    charm.type === "letter" ? (
                       <div
                         key={idx}
                         className="flex items-center justify-between bg-neutral-50 p-3 rounded-lg"
@@ -547,7 +568,7 @@ export default function ProductPage() {
                           ))}
                         </div>
                       </div>
-                    ) : null
+                    ) : null,
                   )}
                 </div>
               )}
@@ -568,7 +589,7 @@ export default function ProductPage() {
               <div className="grid grid-cols-2 gap-2 mb-4">
                 {shapes.map((shape) => {
                   const isSelected = charms.some(
-                    (c) => c.type === 'shape' && c.shapeId === shape.id
+                    (c) => c.type === "shape" && c.shapeId === shape.id,
                   );
                   const isDisabled = !isSelected && !canAddMore;
 
@@ -595,10 +616,10 @@ export default function ProductPage() {
               </div>
 
               {/* Selected Shapes List */}
-              {charms.some((c) => c.type === 'shape') && (
+              {charms.some((c) => c.type === "shape") && (
                 <div className="space-y-2 border-t border-neutral-200 pt-4">
                   {charms.map((charm, idx) => {
-                    if (charm.type !== 'shape') return null;
+                    if (charm.type !== "shape") return null;
                     const shape = shapes.find((s) => s.id === charm.shapeId);
                     return (
                       <div

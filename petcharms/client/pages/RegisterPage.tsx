@@ -93,14 +93,18 @@ export default function RegisterPage() {
 
       <div className="max-w-md mx-auto px-4 py-12">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-light text-neutral-900 mb-2">Create Account</h1>
+          <h1 className="text-3xl font-light text-neutral-900 mb-2">
+            Create Account
+          </h1>
           <p className="text-neutral-600">Sign up to start shopping</p>
         </div>
 
         <form onSubmit={handleRegister} className="space-y-4">
           {/* Full Name */}
           <div>
-            <label className="block text-sm font-medium text-neutral-900 mb-2">Full Name</label>
+            <label className="block text-sm font-medium text-neutral-900 mb-2">
+              Full Name
+            </label>
             <input
               type="text"
               required
@@ -116,7 +120,9 @@ export default function RegisterPage() {
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-neutral-900 mb-2">Email</label>
+            <label className="block text-sm font-medium text-neutral-900 mb-2">
+              Email
+            </label>
             <input
               type="email"
               required
@@ -132,7 +138,9 @@ export default function RegisterPage() {
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-neutral-900 mb-2">Password</label>
+            <label className="block text-sm font-medium text-neutral-900 mb-2">
+              Password
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -150,7 +158,11 @@ export default function RegisterPage() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
               >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
               </button>
             </div>
           </div>
@@ -195,7 +207,10 @@ export default function RegisterPage() {
         <div className="text-center mt-6">
           <p className="text-neutral-600">
             Already have an account?{" "}
-            <Link to="/login" className="text-amber-600 hover:text-amber-700 font-medium">
+            <Link
+              to="/login"
+              className="text-amber-600 hover:text-amber-700 font-medium"
+            >
               Sign in
             </Link>
           </p>
@@ -203,7 +218,10 @@ export default function RegisterPage() {
 
         {/* Back Link */}
         <div className="text-center mt-4">
-          <Link to="/" className="text-sm text-neutral-500 hover:text-neutral-700">
+          <Link
+            to="/"
+            className="text-sm text-neutral-500 hover:text-neutral-700"
+          >
             ← Back to home
           </Link>
         </div>

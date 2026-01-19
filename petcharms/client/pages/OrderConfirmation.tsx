@@ -56,15 +56,23 @@ export default function OrderConfirmation() {
       <div className="min-h-screen bg-white">
         <nav className="sticky top-0 z-50 bg-white border-b border-neutral-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <Link to="/" className="flex items-center gap-2 hover:opacity-70 transition">
+            <Link
+              to="/"
+              className="flex items-center gap-2 hover:opacity-70 transition"
+            >
               <Sparkles className="w-6 h-6 text-amber-600" />
-              <span className="text-xl font-semibold text-neutral-900">🐾 PetCharms</span>
+              <span className="text-xl font-semibold text-neutral-900">
+                🐾 PetCharms
+              </span>
             </Link>
           </div>
         </nav>
         <div className="text-center py-16">
           <p className="text-neutral-600 mb-4">No order found</p>
-          <Link to="/" className="text-amber-600 hover:text-amber-700 font-medium">
+          <Link
+            to="/"
+            className="text-amber-600 hover:text-amber-700 font-medium"
+          >
             ← Back to home
           </Link>
         </div>
@@ -77,9 +85,14 @@ export default function OrderConfirmation() {
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-white border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-2 hover:opacity-70 transition">
+          <Link
+            to="/"
+            className="flex items-center gap-2 hover:opacity-70 transition"
+          >
             <Sparkles className="w-6 h-6 text-amber-600" />
-            <span className="text-xl font-semibold text-neutral-900">🐾 PetCharms</span>
+            <span className="text-xl font-semibold text-neutral-900">
+              🐾 PetCharms
+            </span>
           </Link>
         </div>
       </nav>
@@ -103,14 +116,15 @@ export default function OrderConfirmation() {
           <p className="text-sm text-neutral-600 mb-2">Order Number</p>
           <p className="text-3xl font-bold text-amber-700 font-mono break-all">
             {(() => {
-              if (order?.orderId && typeof order.orderId === 'string') {
+              if (order?.orderId && typeof order.orderId === "string") {
                 return order.orderId.substring(0, 8).toUpperCase();
               }
               return Math.random().toString(36).substring(2, 10).toUpperCase();
             })()}
           </p>
           <p className="text-xs text-neutral-500 mt-4">
-            A confirmation email has been sent to {order?.customerEmail || 'your email'}
+            A confirmation email has been sent to{" "}
+            {order?.customerEmail || "your email"}
           </p>
         </div>
 
@@ -155,7 +169,9 @@ export default function OrderConfirmation() {
               <h3 className="font-semibold text-neutral-900">Shipping To</h3>
             </div>
             <div className="space-y-2 text-sm">
-              <p className="font-medium text-neutral-900">{order.customerName}</p>
+              <p className="font-medium text-neutral-900">
+                {order.customerName}
+              </p>
               <p className="text-neutral-600 text-xs whitespace-pre-wrap">
                 {order.cart[0]?.product_name || "Charm Necklace"}
               </p>
@@ -182,9 +198,7 @@ export default function OrderConfirmation() {
                         <p>Letters: {item.customizations.letters.length}</p>
                       )}
                       {item.customizations.shapes.length > 0 && (
-                        <p>
-                          Shape Charms: {item.customizations.shapes.length}
-                        </p>
+                        <p>Shape Charms: {item.customizations.shapes.length}</p>
                       )}
                     </div>
                   </div>

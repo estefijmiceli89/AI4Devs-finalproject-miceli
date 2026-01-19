@@ -37,7 +37,7 @@ export default function OrdersPage() {
     const checkAuth = async () => {
       try {
         const { data: authData } = await supabase.auth.getSession();
-        
+
         if (!authData.session) {
           navigate("/login");
           return;
@@ -86,15 +86,19 @@ export default function OrdersPage() {
     checkAuth();
   }, [navigate, toast]);
 
-
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
         <nav className="sticky top-0 z-50 bg-white border-b border-neutral-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <Link to="/" className="flex items-center gap-2 hover:opacity-70 transition">
+            <Link
+              to="/"
+              className="flex items-center gap-2 hover:opacity-70 transition"
+            >
               <Sparkles className="w-6 h-6 text-amber-600" />
-              <span className="text-xl font-semibold text-neutral-900">🐾 PetCharms</span>
+              <span className="text-xl font-semibold text-neutral-900">
+                🐾 PetCharms
+              </span>
             </Link>
           </div>
         </nav>
@@ -116,7 +120,9 @@ export default function OrdersPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-light text-neutral-900 mb-2">My Orders</h1>
+          <h1 className="text-4xl font-light text-neutral-900 mb-2">
+            My Orders
+          </h1>
           <p className="text-neutral-600">
             Hello, {user?.full_name || user?.email}
           </p>
@@ -125,7 +131,9 @@ export default function OrdersPage() {
         {/* Orders List */}
         {orders.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-neutral-600 mb-4">You haven't placed any orders yet.</p>
+            <p className="text-neutral-600 mb-4">
+              You haven't placed any orders yet.
+            </p>
             <Link
               to="/"
               className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-800 transition"
@@ -165,7 +173,9 @@ export default function OrdersPage() {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <p className="text-xs text-neutral-600">Size</p>
-                      <p className="font-semibold text-neutral-900">{order.size}</p>
+                      <p className="font-semibold text-neutral-900">
+                        {order.size}
+                      </p>
                     </div>
                     <div>
                       <p className="text-xs text-neutral-600">Collar Color</p>

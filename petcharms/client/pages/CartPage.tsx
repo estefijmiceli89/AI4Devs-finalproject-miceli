@@ -128,17 +128,18 @@ export default function CartPage() {
                               <div
                                 className="w-6 h-6 rounded-full border-2 border-neutral-300"
                                 style={{
-                                  backgroundColor: {
-                                    "collar-red": "#DC2626",
-                                    "collar-blue": "#2563EB",
-                                    "collar-green": "#16A34A",
-                                    "collar-purple": "#7C3AED",
-                                    "collar-pink": "#EC4899",
-                                    "collar-yellow": "#EAB308",
-                                    "collar-orange": "#EA580C",
-                                    "collar-black": "#000000",
-                                    "collar-brown": "#92400E",
-                                  }[item.collarColor] || "#DC2626",
+                                  backgroundColor:
+                                    {
+                                      "collar-red": "#DC2626",
+                                      "collar-blue": "#2563EB",
+                                      "collar-green": "#16A34A",
+                                      "collar-purple": "#7C3AED",
+                                      "collar-pink": "#EC4899",
+                                      "collar-yellow": "#EAB308",
+                                      "collar-orange": "#EA580C",
+                                      "collar-black": "#000000",
+                                      "collar-brown": "#92400E",
+                                    }[item.collarColor] || "#DC2626",
                                 }}
                               />
                               <span className="text-sm font-semibold text-neutral-900">
@@ -146,7 +147,9 @@ export default function CartPage() {
                                   .replace("collar-", "")
                                   .charAt(0)
                                   .toUpperCase() +
-                                  item.collarColor.replace("collar-", "").slice(1)}
+                                  item.collarColor
+                                    .replace("collar-", "")
+                                    .slice(1)}
                               </span>
                             </div>
                           </div>

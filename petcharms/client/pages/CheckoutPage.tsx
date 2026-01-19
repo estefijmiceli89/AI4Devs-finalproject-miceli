@@ -162,7 +162,7 @@ export default function CheckoutPage() {
           cart: cart,
           total: totalPrice,
           createdAt: new Date().toISOString(),
-        })
+        }),
       );
 
       // Clear cart
@@ -194,12 +194,20 @@ export default function CheckoutPage() {
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-white border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-2 hover:opacity-70 transition">
+          <Link
+            to="/"
+            className="flex items-center gap-2 hover:opacity-70 transition"
+          >
             <Sparkles className="w-6 h-6 text-amber-600" />
-            <span className="text-xl font-semibold text-neutral-900">🐾 PetCharms</span>
+            <span className="text-xl font-semibold text-neutral-900">
+              🐾 PetCharms
+            </span>
           </Link>
           <div className="flex gap-4">
-            <Link to="/cart" className="text-sm text-neutral-600 hover:text-neutral-900">
+            <Link
+              to="/cart"
+              className="text-sm text-neutral-600 hover:text-neutral-900"
+            >
               Back to Cart
             </Link>
           </div>

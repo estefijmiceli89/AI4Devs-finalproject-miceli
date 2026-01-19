@@ -211,7 +211,8 @@ export default function Index() {
               Choose Your Charm Shapes
             </h2>
             <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-              Add up to 9 fun charm shapes to your pet's collar. Mix with custom letters.
+              Add up to 9 fun charm shapes to your pet's collar. Mix with custom
+              letters.
             </p>
           </div>
 
@@ -265,7 +266,8 @@ export default function Index() {
                 Fully Customizable
               </h3>
               <p className="text-neutral-600">
-                Add your pet's name with colored letters and choose from 35+ charm shapes.
+                Add your pet's name with colored letters and choose from 35+
+                charm shapes.
               </p>
             </div>
 
@@ -324,7 +326,9 @@ export default function Index() {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles className="w-5 h-5 text-amber-600" />
-                <span className="font-semibold text-neutral-900">PetCharms</span>
+                <span className="font-semibold text-neutral-900">
+                  PetCharms
+                </span>
               </div>
               <p className="text-sm text-neutral-600">
                 Personalized collars for every furry friend.

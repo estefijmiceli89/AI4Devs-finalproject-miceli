@@ -33,7 +33,7 @@ export default function Header() {
       (_event, session) => {
         setIsLoggedIn(!!session);
         setUserEmail(session?.user.email || "");
-      }
+      },
     );
 
     return () => {
@@ -55,7 +55,7 @@ export default function Header() {
 
       setIsLoggedIn(false);
       setUserEmail("");
-      
+
       toast({
         title: "Logged out",
         description: "You have been logged out successfully.",
