@@ -5,11 +5,6 @@ import { handleDemo } from "./routes/demo";
 import { handleGetProducts } from "./routes/products";
 import { handleGetCharms } from "./routes/charms";
 import { handleGetShapes, handleGetColors } from "./routes/shapes";
-import {
-  handleCreateOrder,
-  handleGetOrder,
-  handleGetOrders,
-} from "./routes/orders";
 
 export function createServer() {
   const app = express();
@@ -32,9 +27,6 @@ export function createServer() {
   app.get("/api/v1/charms", handleGetCharms);
   app.get("/api/v1/shapes", handleGetShapes);
   app.get("/api/v1/colors", handleGetColors);
-  app.post("/api/v1/orders", handleCreateOrder);
-  app.get("/api/v1/orders", handleGetOrders);
-  app.get("/api/v1/orders/:orderId", handleGetOrder);
 
   return app;
 }

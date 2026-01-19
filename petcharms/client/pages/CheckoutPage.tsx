@@ -122,7 +122,7 @@ export default function CheckoutPage() {
       const totalPrice = cart.reduce((sum, item) => sum + item.total_price, 0);
 
       // Save order to Supabase
-      const { error: insertError } = await supabase
+      const { data: orderData, error: insertError } = await supabase
         .from("orders")
         .insert([
           {
@@ -138,7 +138,9 @@ export default function CheckoutPage() {
             total_price: totalPrice,
             status: "pending",
           },
-        ]);
+        ])
+        .select()
+        .single();
 
       if (insertError) {
         console.error("Error saving order:", insertError);
@@ -150,34 +152,11 @@ export default function CheckoutPage() {
         return;
       }
 
-      // Also call the API endpoint for backward compatibility
-      const orderData = {
-        product_id: cart[0]?.product_id || "",
-        size: cart[0]?.size || "M",
-        collarColor: cart[0]?.collarColor || "collar-red",
-        petName: cart[0]?.petName || "Custom",
-        customizations: cart[0]?.customizations || {
-          letters: [],
-          shapes: [],
-        },
-        total_price: totalPrice,
-      };
-
-      const apiResponse = await fetch("/api/v1/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderData),
-      });
-
-      const apiResult = await apiResponse.json();
-
       // Save order info to localStorage
       localStorage.setItem(
         "lastOrder",
         JSON.stringify({
-          orderId: apiResult.data?.id,
+          orderId: orderData?.id,
           customerName: formData.fullName,
           customerEmail: formData.email,
           cart: cart,

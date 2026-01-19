@@ -63,22 +63,29 @@ PORT=8080
 
 ## 🗄️ Base de Datos
 
-### Supabase (Autenticación)
+### Supabase (Base de Datos y Autenticación)
 
-El proyecto usa **Supabase** para la autenticación de usuarios. Las credenciales están configuradas en `client/lib/supabase.ts`.
+El proyecto usa **Supabase** como base de datos principal y para la autenticación de usuarios:
 
-**Estado actual:** Las credenciales están hardcodeadas en el código. Para producción, deberías moverlas a variables de entorno.
+- **Autenticación**: Registro, login y gestión de sesiones
+- **Base de Datos**: Almacenamiento de usuarios y órdenes
+- Las credenciales están configuradas en `client/lib/supabase.ts`
+
+**Tablas principales:**
+- `users` - Perfiles de usuarios
+- `orders` - Órdenes de clientes (con customizaciones)
 
 ### Almacenamiento de Datos
 
-**Backend (Órdenes):**
-- Las órdenes se almacenan **en memoria** (Map en `server/routes/orders.ts`)
-- ⚠️ **Importante:** Las órdenes se pierden al reiniciar el servidor
-- Para producción, deberías migrar a una base de datos real (PostgreSQL, SQLite, etc.)
+**Órdenes y Usuarios:**
+- ✅ Las órdenes se almacenan **persistentemente** en Supabase
+- ✅ Los perfiles de usuario también en Supabase
+- ✅ **Totalmente persistente:** Los datos nunca se pierden
 
 **Datos de Productos/Charms:**
 - Los productos, charms, shapes y colores están **hardcodeados** en las rutas del servidor
 - Archivos: `server/routes/products.ts`, `server/routes/charms.ts`, `server/routes/shapes.ts`
+- 💡 **Sugerencia:** Estos también podrían migrarse a Supabase en el futuro
 
 ## ▶️ Ejecutar el Proyecto
 
@@ -169,9 +176,8 @@ pnpm format.fix       # Formatea código con Prettier
 - `GET /api/v1/colors` - Lista de colores disponibles
 
 ### Órdenes
-- `POST /api/v1/orders` - Crear una nueva orden
-- `GET /api/v1/orders` - Listar todas las órdenes
-- `GET /api/v1/orders/:orderId` - Obtener una orden específica
+- ✅ **Gestionadas directamente por Supabase** (no requieren API del servidor)
+- Las órdenes se crean y consultan directamente desde el frontend usando el cliente de Supabase
 
 ### Otros
 - `GET /api/ping` - Endpoint de prueba
