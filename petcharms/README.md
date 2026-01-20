@@ -15,7 +15,8 @@
 7. [Diseño Frontend](#7-diseño-frontend)
 8. [Plan de Testing](#8-plan-de-testing)
 9. [CI/CD Pipeline](#9-cicd-pipeline)
-10. [Registro del Uso de IA](#10-registro-del-uso-de-ia)
+10. [🚀 Despliegue y Producción](#10--despliegue-y-producción)
+11. [Registro del Uso de IA](#11-registro-del-uso-de-ia)
 
 ---
 
@@ -67,14 +68,10 @@ Un e-commerce minimalista que permite a clientes comprar un collar base personal
    - Orders Page para ver historial
    - Login y Register Pages para autenticación
 
-6. **API REST Completa**
+6. **API REST Implementada**
    - GET /api/v1/products - Lista de productos
-   - GET /api/v1/charms - Lista de charms disponibles
    - GET /api/v1/shapes - Lista de formas disponibles (más de 30)
    - GET /api/v1/colors - Lista de colores para letras
-   - POST /api/v1/orders - Crear nueva orden
-   - GET /api/v1/orders - Listar todas las órdenes
-   - GET /api/v1/orders/:orderId - Obtener orden específica
 
 ### 👥 Público Objetivo
 
@@ -201,7 +198,7 @@ Then:
   - Puedo seleccionar de 0 a N charms
 ```
 
-**Dependencias:** Lista de charms disponibles (API endpoint)  
+**Dependencias:** Lista de shapes disponibles (GET /api/v1/shapes), lista de colores disponibles (GET /api/v1/colors)  
 **Riesgos:** Selecciones no se guardan → Mitigación: state management local (Zustand)  
 **Notas QA:**
 
@@ -286,8 +283,8 @@ Then veo:
 Given que estoy en el carrito
 When hago click en "Proceder al checkout" → "Confirmar orden"
 Then:
-  - Se envía POST /api/v1/orders con datos del carrito
-  - Se genera un número de orden único (simulado)
+  - Se envía orden directamente a Supabase (tabla 'orders')
+  - Se genera un número de orden único (UUID de Supabase)
   - Se muestra página de confirmación con:
     - Número de orden
     - Resumen del producto
@@ -295,7 +292,7 @@ Then:
   - El carrito se vacía
 ```
 
-**Dependencias:** Endpoint POST /api/v1/orders, modelo de datos Order  
+**Dependencias:** Cliente Supabase configurado, tabla 'orders' en Supabase PostgreSQL, usuario autenticado  
 **Riesgos:** Orden duplicada si envío 2 veces | Mitigación: debounce + optimistic update  
 **Notas QA:**
 
@@ -368,7 +365,7 @@ Then veo:
   - Opción "Repetir esta orden"
 ```
 
-**Dependencias:** Historial en localStorage + endpoint GET /api/v1/orders  
+**Dependencias:** Cliente Supabase configurado, tabla 'orders' en Supabase PostgreSQL, usuario autenticado  
 **Notas QA:** Baja prioridad, buscar en Etapa 3+
 
 ---
@@ -381,8 +378,8 @@ Then veo:
 | ------ | ----------------------------- | -------- | -------------- | ----------------------- | ---------- |
 | TK-001 | Setup base de datos           | Backend  | Infrastructure | Base de datos           | 2h         |
 | TK-002 | GET /api/v1/products          | Backend  | US-001         | API Products            | 1.5h       |
-| TK-003 | GET /api/v1/charms            | Backend  | US-002         | API Charms              | 1.5h       |
-| TK-004 | POST /api/v1/orders           | Backend  | US-005         | API Orders              | 3h         |
+| TK-003 | GET /api/v1/shapes            | Backend  | US-002         | API Shapes              | 1.5h       |
+| TK-004 | Integración Supabase Orders   | Frontend | US-005         | CheckoutPage + Supabase | 3h         |
 | TK-005 | Error Handling Global         | Backend  | Infrastructure | Middleware              | 2h         |
 | TK-006 | Setup Zustand                 | Frontend | Infrastructure | State Management        | 1h         |
 | TK-007 | Landing Page Component        | Frontend | US-001         | Pages/Index             | 2h         |
@@ -480,60 +477,60 @@ Cada ticket sigue este formato:
 
 ---
 
-#### TK-003: GET /api/v1/charms (Listar charms disponibles)
+#### TK-003: GET /api/v1/shapes (Listar shapes disponibles)
 
 **Tipo:** Backend  
 **Story:** US-002  
-**Módulo/Impacto:** API Charms - Endpoint de charms  
+**Módulo/Impacto:** API Shapes - Endpoint de shapes  
 **Estimación:** 1.5 horas
 
 **Descripción:**
 
-- Endpoint que retorna lista de charms disponibles
-- Incluye ID, nombre, descripción, precio, imagen, color
+- Endpoint que retorna lista de shapes disponibles
+- Incluye ID, nombre, emoji, descripción
 
 **Criterios de Done:**
 
-- [ ] Endpoint devuelve JSON con array de charms
+- [ ] Endpoint devuelve JSON con array de shapes
 - [ ] Tests (unit + integration)
 - [ ] Datos validados (no valores nulos)
 
 **Checklist QA:**
 
-- [ ] Almenos 5 charms en mock data
-- [ ] Precios válidos (≥ 0)
-- [ ] Colores realistas
-- [ ] Imágenes no broken
+- [ ] Almenos 5 shapes en mock data
 
 ---
 
-#### TK-004: POST /api/v1/orders (Crear orden)
+#### TK-004: Integración Supabase Orders (Crear orden)
 
-**Tipo:** Backend  
+**Tipo:** Frontend  
 **Story:** US-005  
-**Módulo/Impacto:** API Orders - Creación y gestión de órdenes  
+**Módulo/Impacto:** CheckoutPage + Supabase - Creación de órdenes  
 **Estimación:** 3 horas
 
 **Descripción:**
 
-- Recibe: { product_id, charms_ids[], total_price }
-- Valida estructura con Zod
-- Genera orden única con timestamp
-- Retorna: { order_id, created_at, total_price, items }
+- Integrar cliente Supabase en CheckoutPage
+- Crear orden directamente en Supabase (tabla 'orders')
+- Validar datos del carrito antes de enviar
+- Manejar errores de Supabase y mostrar feedback al usuario
+- Guardar orden_id en localStorage para confirmación
 
 **Criterios de Done:**
 
-- [ ] Validación Zod en place
-- [ ] Orden se crea en DB
-- [ ] ID de orden es único (UUID o incremental)
-- [ ] Tests (unit + integration)
+- [ ] Cliente Supabase configurado y funcionando
+- [ ] Orden se crea en Supabase PostgreSQL
+- [ ] ID de orden es único (UUID generado por Supabase)
+- [ ] Validación de datos antes de enviar
+- [ ] Manejo de errores implementado
 
 **Checklist QA:**
 
-- [ ] Validar que charms_ids existen en DB
+- [ ] Validar que usuario está autenticado antes de crear orden
 - [ ] Total de precio se calcula correctamente
-- [ ] No se crea orden sin items
-- [ ] Orden vacía no se permite
+- [ ] No se crea orden si carrito está vacío
+- [ ] Error handling muestra mensajes claros al usuario
+- [ ] Orden se guarda correctamente en Supabase
 
 ---
 
@@ -633,16 +630,21 @@ Cada ticket sigue este formato:
 
 - Página de producto con:
   - Imagen del collar
-  - Checkboxes para charms (GET /api/v1/charms)
+  - Selector de tamaño (S, M, L)
+  - Selector de color del collar
+  - Input para nombre de mascota
+  - Selector de letras personalizadas (hasta 12 letras)
+  - Selector de formas/charm shapes (GET /api/v1/shapes)
+  - Selector de colores para letras (GET /api/v1/colors)
   - Cálculo de precio en tiempo real
   - Botón "Agregar al carrito"
 
 **Criterios de Done:**
 
-- [ ] Charms cargan desde API
-- [ ] Checkboxes funcionan
+- [ ] Shapes y colors cargan desde API
+- [ ] Selectores funcionan correctamente
 - [ ] Precio calcula correctamente
-- [ ] Item se agrega al carrito (Zustand)
+- [ ] Item se agrega al carrito (localStorage)
 
 **Checklist QA:**
 
@@ -693,24 +695,24 @@ Cada ticket sigue este formato:
 
 **Descripción:**
 
-- POST /api/v1/orders al hacer click en confirmar
-- Mostrar orden_id, resumen, estimado de entrega
+- Orden se crea en Supabase desde CheckoutPage
+- Mostrar orden_id (UUID de Supabase), resumen, estimado de entrega
 - Botón "Continuar comprando" → vuelve a home
-- Manejo de errores (mostrar toast si falla)
+- Manejo de errores (mostrar toast si falla creación en Supabase)
 
 **Criterios de Done:**
 
-- [ ] POST se envía correctamente
+- [ ] Orden se crea correctamente en Supabase
 - [ ] Confirmación renderea con datos reales
 - [ ] Carrito se vacía después
 - [ ] Error handling funciona
 
 **Checklist QA:**
 
-- [ ] Validar que POST llega al backend
-- [ ] orden_id se muestra
-- [ ] Número de orden es único
-- [ ] Error toast si POST falla
+- [ ] Validar que orden se guarda en Supabase
+- [ ] orden_id se muestra correctamente
+- [ ] Número de orden es único (UUID)
+- [ ] Error toast si creación falla
 - [ ] Botón "Continuar" navega a home
 
 ---
@@ -804,34 +806,70 @@ Cada ticket sigue este formato:
 
 ### 📐 Diagrama de Arquitectura (Mermaid)
 
+#### **Arquitectura en Desarrollo**
+
 ```mermaid
 graph TB
     Client["🖥️ Client<br/>(React 18 + Vite + TanStack Query)<br/>- Index Page<br/>- ProductPage<br/>- CartPage<br/>- CheckoutPage<br/>- OrderConfirmation<br/>- OrdersPage<br/>- LoginPage<br/>- RegisterPage"]
 
-    ViteDev["⚡ Vite Dev Server<br/>(Puerto 8080)<br/>- Hot Module Replacement<br/>- Express Middleware"]
+    ViteDev["⚡ Vite Dev Server<br/>(Puerto 8080)<br/>- Hot Module Replacement<br/>- Express Middleware Plugin"]
 
     API["🔌 Express API<br/>(Integrado con Vite)<br/>- Routes Handlers<br/>- Zod Validation<br/>- Error Handling<br/>- CORS"]
 
-    Routes["📡 API Routes<br/>- /api/v1/products<br/>- /api/v1/charms<br/>- /api/v1/shapes<br/>- /api/v1/colors<br/>- /api/v1/orders"]
+    Routes["📡 API Routes<br/>- /api/v1/products<br/>- /api/v1/shapes<br/>- /api/v1/colors"]
 
-    MemoryStore["💾 In-Memory Storage<br/>(Map<string, Order>)<br/>- Orders temporales<br/>- Se pierde al reiniciar"]
+    Supabase["🔐 Supabase<br/>- Authentication<br/>- PostgreSQL Database<br/>- Orders Storage"]
 
-    Supabase["🔐 Supabase<br/>- Authentication<br/>- User Management"]
-
-    StaticData["📦 Static Data<br/>(Hardcoded)<br/>- Products<br/>- Charms<br/>- Shapes<br/>- Colors"]
+    StaticData["📦 Static Data<br/>(Hardcoded en Routes)<br/>- Products<br/>- Shapes<br/>- Colors"]
 
     Client -->|HTTP Requests| ViteDev
-    ViteDev -->|Proxy API| API
+    ViteDev -->|Express Middleware| API
     API -->|Route Handlers| Routes
-    Routes -->|Read/Write| MemoryStore
     Routes -->|Read| StaticData
-    Client -->|Auth| Supabase
+    Client -->|Auth & Orders| Supabase
 
     style Client fill:#e1f5ff
     style ViteDev fill:#fff3e0
     style API fill:#f3e5f5
     style Routes fill:#e8f5e9
-    style MemoryStore fill:#fce4ec
+    style Supabase fill:#e0f2f1
+    style StaticData fill:#f1f8e9
+```
+
+#### **Arquitectura en Producción (Netlify)**
+
+```mermaid
+graph TB
+    User["👤 Usuario<br/>Navegador Web"]
+
+    NetlifyCDN["🌐 Netlify CDN<br/>- SPA Hosting<br/>- Static Assets<br/>- Edge Network"]
+
+    SPA["📱 Single Page App<br/>(React Build)<br/>dist/spa/<br/>- Index.html<br/>- Assets JS/CSS"]
+
+    NetlifyFunctions["⚡ Netlify Functions<br/>Serverless API<br/>netlify/functions/api.ts<br/>- Express wrapped<br/>- serverless-http"]
+
+    ExpressAPI["🔌 Express API<br/>(Mismo código que dev)<br/>- Routes Handlers<br/>- Zod Validation<br/>- CORS"]
+
+    Routes["📡 API Routes<br/>- /api/v1/products<br/>- /api/v1/shapes<br/>- /api/v1/colors"]
+
+    Supabase["🔐 Supabase<br/>- Authentication<br/>- PostgreSQL Database<br/>- Orders Storage"]
+
+    StaticData["📦 Static Data<br/>(Hardcoded)<br/>- Products<br/>- Shapes<br/>- Colors"]
+
+    User -->|HTTPS| NetlifyCDN
+    NetlifyCDN -->|Serves| SPA
+    SPA -->|API Calls| NetlifyFunctions
+    NetlifyFunctions -->|Wraps| ExpressAPI
+    ExpressAPI -->|Route Handlers| Routes
+    Routes -->|Read| StaticData
+    SPA -->|Auth & Orders| Supabase
+
+    style User fill:#e3f2fd
+    style NetlifyCDN fill:#fff3e0
+    style SPA fill:#e1f5ff
+    style NetlifyFunctions fill:#f3e5f5
+    style ExpressAPI fill:#e8f5e9
+    style Routes fill:#e8f5e9
     style Supabase fill:#e0f2f1
     style StaticData fill:#f1f8e9
 ```
@@ -840,78 +878,171 @@ graph TB
 
 **¿Qué hace cada componente?**
 
+#### **En Desarrollo:**
+
 1. **Client (React + Vite):** La interfaz de usuario. Usa React Router para navegación, TanStack Query para manejo de estado del servidor, y shadcn/ui para componentes.
 
-2. **Vite Dev Server:** Servidor de desarrollo que integra Express como middleware. Todo corre en el puerto 8080 durante desarrollo.
+2. **Vite Dev Server:** Servidor de desarrollo que integra Express como middleware mediante un plugin personalizado. Todo corre en el puerto 8080 durante desarrollo. El plugin `expressPlugin()` en `vite.config.ts` añade Express como middleware al servidor de Vite.
 
-3. **Express API:** Backend integrado que maneja las rutas API. Valida requests con Zod y retorna respuestas consistentes.
+3. **Express API:** Backend integrado que maneja las rutas API. Valida requests con Zod y retorna respuestas consistentes. El mismo código se usa tanto en desarrollo como en producción.
 
-4. **Routes Handlers:** Funciones que procesan cada endpoint específico (products, charms, shapes, colors, orders).
+4. **Routes Handlers:** Funciones que procesan cada endpoint específico (products, shapes, colors). Ubicadas en `server/routes/`.
 
-5. **In-Memory Storage:** Las órdenes se guardan temporalmente en un Map de JavaScript. Se pierden al reiniciar el servidor (OK para MVP).
+5. **Static Data:** Productos, shapes y colores están hardcodeados en los archivos de rutas (`server/routes/products.ts` y `server/routes/shapes.ts`). Fácil de cambiar sin base de datos.
 
-6. **Static Data:** Productos, charms, shapes y colores están hardcodeados en los archivos de rutas. Fácil de cambiar sin base de datos.
+6. **Supabase:** Servicio externo para autenticación de usuarios (registro, login) y almacenamiento de órdenes en PostgreSQL. Las órdenes se guardan directamente en Supabase desde el frontend.
 
-7. **Supabase:** Servicio externo para autenticación de usuarios (registro, login). Las credenciales están en el código (mover a env vars en producción).
+#### **En Producción (Netlify):**
 
-### 📁 Estructura de Carpetas Real
+1. **Netlify CDN:** Sirve los archivos estáticos del frontend (SPA) desde `dist/spa/`. Incluye edge network para mejor performance global.
+
+2. **Netlify Functions:** Wrapper serverless que ejecuta Express API usando `serverless-http`. El archivo `netlify/functions/api.ts` importa y envuelve el mismo servidor Express usado en desarrollo.
+
+3. **Express API:** El mismo código Express corre en Netlify Functions, garantizando consistencia entre desarrollo y producción.
+
+4. **Supabase:** Mismo servicio que en desarrollo, ahora con variables de entorno configuradas en Netlify Dashboard.
+
+**Ventajas de esta arquitectura:**
+- ✅ Mismo código para desarrollo y producción (menos bugs)
+- ✅ Serverless = escalabilidad automática sin gestión de servidores
+- ✅ Netlify CDN = performance global excelente
+- ✅ Hot reload en desarrollo con Vite
+- ✅ Type-safe con TypeScript end-to-end
+
+### 📁 Estructura de Carpetas Real (Implementada)
 
 ```
 petcharms/
-├── client/                    # Frontend React
-│   ├── pages/                 # Páginas/rutas
-│   │   ├── Index.tsx          # Landing page
-│   │   ├── ProductPage.tsx    # Personalización
-│   │   ├── CartPage.tsx       # Carrito
-│   │   ├── CheckoutPage.tsx   # Checkout
-│   │   ├── OrderConfirmation.tsx
-│   │   ├── OrdersPage.tsx
-│   │   ├── LoginPage.tsx
-│   │   └── RegisterPage.tsx
-│   ├── components/            # Componentes React
-│   │   ├── Header.tsx
-│   │   └── ui/                # shadcn/ui components
-│   ├── hooks/                 # Custom hooks
-│   ├── lib/                   # Utilidades
-│   │   ├── supabase.ts        # Cliente Supabase
-│   │   └── utils.ts
-│   └── App.tsx                # Router principal
-├── server/                    # Backend Express
-│   ├── routes/                # Handlers de API
-│   │   ├── products.ts
-│   │   ├── charms.ts
-│   │   ├── shapes.ts
-│   │   └── orders.ts
-│   └── index.ts               # Configuración Express
-├── shared/                    # Código compartido
-│   └── api.ts                 # Tipos TypeScript
-├── netlify/                   # Netlify Functions
-│   └── functions/
-│       └── api.ts
-├── public/                    # Archivos estáticos
-├── vite.config.ts             # Config Vite
-└── package.json
+├── client/                          # Frontend React
+│   ├── pages/                      # Páginas/rutas de la aplicación
+│   │   ├── Index.tsx               # Landing page con productos y shapes
+│   │   ├── ProductPage.tsx         # Personalización completa (tamaño, color, letras, formas)
+│   │   ├── CartPage.tsx            # Resumen y gestión del carrito
+│   │   ├── CheckoutPage.tsx        # Formulario de checkout
+│   │   ├── OrderConfirmation.tsx   # Confirmación de orden
+│   │   ├── OrdersPage.tsx          # Historial de órdenes del usuario
+│   │   ├── LoginPage.tsx           # Inicio de sesión (Supabase)
+│   │   ├── RegisterPage.tsx        # Registro de usuarios (Supabase)
+│   │   └── NotFound.tsx            # Página 404
+│   ├── components/                 # Componentes React reutilizables
+│   │   ├── Header.tsx              # Navegación principal con links y auth
+│   │   └── ui/                     # Componentes shadcn/ui (49 archivos)
+│   │       ├── button.tsx
+│   │       ├── card.tsx
+│   │       ├── checkbox.tsx
+│   │       ├── input.tsx
+│   │       ├── toast.tsx
+│   │       ├── dialog.tsx
+│   │       ├── select.tsx
+│   │       └── ... (más de 40 componentes)
+│   ├── hooks/                      # Custom React hooks
+│   │   ├── use-mobile.tsx          # Hook para detectar dispositivos móviles
+│   │   └── use-toast.ts            # Hook para sistema de toasts
+│   ├── lib/                        # Utilidades y configuraciones
+│   │   ├── supabase.ts             # Cliente Supabase configurado
+│   │   ├── utils.ts                # Utilidades (cn helper, etc.)
+│   │   └── utils.spec.ts           # Tests de utilidades
+│   ├── App.tsx                     # Router principal + TanStack Query Provider
+│   ├── global.css                  # Estilos globales + TailwindCSS
+│   └── vite-env.d.ts               # Tipos de Vite
+│
+├── server/                         # Backend Express
+│   ├── routes/                     # Handlers de API endpoints
+│   │   ├── products.ts             # GET /api/v1/products
+│   │   └── shapes.ts               # GET /api/v1/shapes, GET /api/v1/colors
+│   ├── index.ts                    # Configuración Express (createServer)
+│   └── node-build.ts               # Entry point para build del servidor
+│
+├── shared/                         # Código compartido entre client y server
+│   └── api.ts                     # Tipos TypeScript compartidos
+│
+├── netlify/                        # Configuración Netlify Functions
+│   ├── functions/
+│   │   └── api.ts                  # Wrapper serverless-http para Express
+│   └── plugins.json                # Plugins de Netlify
+│
+├── public/                         # Archivos estáticos públicos
+│   ├── favicon.ico
+│   ├── necklace.jpg                # Imagen del producto
+│   ├── woman-with-dog.jpg          # Imagen hero
+│   ├── placeholder.svg
+│   └── robots.txt
+│
+├── dist/                           # Build output (generado)
+│   ├── spa/                        # Frontend build (Netlify deploy)
+│   │   ├── index.html
+│   │   ├── assets/                 # JS y CSS bundles
+│   │   └── [archivos públicos]
+│   └── server/                     # Server build (no usado en Netlify)
+│       └── node-build.mjs
+│
+├── index.html                      # Entry point HTML para Vite
+├── vite.config.ts                  # Configuración Vite (dev + build client)
+├── vite.config.server.ts           # Configuración Vite para build del servidor
+├── netlify.toml                    # Configuración Netlify (build, redirects)
+├── tailwind.config.ts              # Configuración TailwindCSS
+├── postcss.config.js                # Configuración PostCSS
+├── tsconfig.json                   # Configuración TypeScript
+├── components.json                 # Configuración shadcn/ui
+├── package.json                    # Dependencias y scripts
+├── pnpm-lock.yaml                  # Lock file de pnpm
+└── README.md                       # Este archivo
 ```
 
+**Notas importantes sobre la estructura:**
+
+- **`client/`**: Todo el código frontend React. Los componentes UI están en `components/ui/` (shadcn/ui).
+- **`server/`**: Backend Express que se ejecuta tanto en desarrollo (como middleware de Vite) como en producción (Netlify Functions).
+- **`netlify/functions/`**: Wrapper que permite ejecutar Express en Netlify Functions usando `serverless-http`.
+- **`shared/`**: Tipos TypeScript compartidos entre frontend y backend para mantener consistencia.
+- **`dist/`**: Generado automáticamente al hacer build. `dist/spa/` se despliega en Netlify.
+- **`public/`**: Archivos estáticos copiados directamente al build final.
+
 ### 🔄 Flujo de Datos (Ejemplo: Crear Orden)
+
+#### **En Desarrollo:**
 
 ```
 [Usuario hace click en "Confirmar orden"]
          ↓
-[React (Client) POST /api/v1/orders]
+[CheckoutPage.tsx valida datos del carrito]
          ↓
-[Express (API) recibe request, valida con Zod]
+[Verifica que usuario está autenticado (Supabase Auth)]
          ↓
-[OrderService.createOrder() calcula precio, crea objeto]
+[Cliente Supabase inserta orden directamente en tabla 'orders']
          ↓
-[OrderRepository.create() inserta en BD]
+[Supabase PostgreSQL inserta orden con UUID único]
          ↓
-[Database retorna orden_id + timestamp]
+[Supabase retorna orden creada con id + timestamp]
          ↓
-[API responde a React con { order_id, created_at, ... }]
+[CheckoutPage guarda order_id en localStorage]
          ↓
-[React renderiza página de confirmación]
+[React navega a OrderConfirmation y renderiza con datos]
 ```
+
+#### **En Producción (Netlify):**
+
+```
+[Usuario hace click en "Confirmar orden"]
+         ↓
+[CheckoutPage.tsx valida datos del carrito]
+         ↓
+[Verifica que usuario está autenticado (Supabase Auth)]
+         ↓
+[Cliente Supabase inserta orden directamente en tabla 'orders']
+         ↓
+[Supabase PostgreSQL inserta orden con UUID único]
+         ↓
+[Supabase retorna orden creada con id + timestamp]
+         ↓
+[CheckoutPage guarda order_id en localStorage]
+         ↓
+[React navega a OrderConfirmation y renderiza con datos]
+```
+
+**Nota importante:** Las órdenes NO pasan por el backend Express. Se crean directamente desde el frontend hacia Supabase usando el cliente de Supabase. El backend Express solo maneja productos, shapes y colors.
+
+**Nota importante:** Las órdenes se crean directamente desde el frontend hacia Supabase, no pasan por el backend Express. El backend Express solo maneja productos, shapes y colors.
 
 ### 📚 Stack Tecnológico Implementado (2024–2025)
 
@@ -930,49 +1061,6 @@ petcharms/
 | **TypeScript**                | TypeScript           | 5.9.2   | Type safety, mejor DX, detección temprana de errores |
 | **Package Manager**           | pnpm                 | 10.14.0 | Más rápido que npm, mejor manejo de dependencias     |
 
-### 🛡️ Seguridad Mínima para MVP
-
-```typescript
-// 1. Rate limiting (expresó-ratelimit)
-const rateLimit = require("express-rate-limit");
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 100, // máximo 100 requests
-});
-app.use("/api/", limiter);
-
-// 2. Input validation (Zod en TODOS los endpoints)
-const createOrderSchema = z.object({
-  product_id: z.string().uuid(),
-  charms_ids: z.array(z.string().uuid()),
-  total_price: z.number().positive(),
-});
-
-// 3. CORS configurado
-app.use(
-  cors({
-    origin: process.env.ALLOWED_ORIGINS?.split(",") || "*",
-    credentials: true,
-  }),
-);
-
-// 4. No exponer stack traces
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({
-    success: false,
-    error: "Internal server error",
-  });
-});
-```
-
-### 📈 Escalabilidad (Futuro)
-
-**Ahora:** SQLite en el servidor  
-**Etapa 2:** PostgreSQL en Neon o Supabase  
-**Etapa 3:** Redis para cache (carrito)  
-**Etapa 4:** Colas de jobs (Bull.js) para órdenes
-
 ---
 
 ## 5. Modelo de Datos
@@ -981,12 +1069,16 @@ app.use((err, req, res, next) => {
 
 ```mermaid
 erDiagram
-    PRODUCTS ||--o{ ORDER_ITEMS : "contains"
-    CHARMS ||--o{ ORDER_ITEMS : "contains"
-    PRODUCTS ||--o{ PRODUCT_CHARMS : "has"
-    CHARMS ||--o{ PRODUCT_CHARMS : "has"
-    PRODUCTS ||--o{ ORDERS : "includes"
-    ORDERS ||--o{ ORDER_ITEMS : "has"
+    USERS ||--o{ ORDERS : "creates"
+    PRODUCTS ||--o{ ORDERS : "references"
+
+    USERS {
+        string id PK "UUID from Supabase Auth"
+        string email "user email"
+        string full_name "user full name"
+        timestamp created_at
+        timestamp updated_at
+    }
 
     PRODUCTS {
         string id PK "UUID"
@@ -998,25 +1090,14 @@ erDiagram
         timestamp updated_at
     }
 
-    CHARMS {
-        string id PK "UUID"
-        string name "charm name"
-        text description "short description"
-        decimal price "price in USD"
-        string color "hex color or name"
-        string image_url "CDN image path"
-        int stock "quantity available"
-        timestamp created_at
-        timestamp updated_at
-    }
-
     ORDERS {
-        string id PK "UUID"
-        string product_id FK "reference to PRODUCTS"
+        string id PK "UUID generated by Supabase"
+        string user_id FK "reference to USERS"
+        string product_id "reference to PRODUCTS"
         string size "S | M | L"
-        string collarColor "color ID del collar"
-        string petName "nombre de la mascota"
-        object customizations "letters y shapes"
+        string collar_color "color ID del collar"
+        string pet_name "nombre de la mascota"
+        jsonb customizations "letters y shapes"
         decimal total_price "final price"
         string status "pending | completed"
         timestamp created_at
@@ -1036,93 +1117,24 @@ erDiagram
     SHAPE {
         string shapeId "ID de la forma seleccionada"
     }
-
-    PRODUCT_CHARMS {
-        string product_id FK
-        string charm_id FK
-        timestamp added_at
-    }
 ```
+
+**Nota:** PRODUCTS, SHAPES y COLORS están hardcodeados en el código del backend (`server/routes/`), no existen como tablas en la base de datos. Solo ORDERS y USERS están almacenados en Supabase PostgreSQL.
 
 ### 📋 Definición de Entidades
 
-#### **PRODUCTS** (Collar Base)
+#### **PRODUCTS** (Collar Base) - Hardcoded
 
-```sql
-CREATE TABLE products (
-  id TEXT PRIMARY KEY, -- UUID
-  name TEXT NOT NULL,
-  description TEXT,
-  price DECIMAL(10, 2) NOT NULL CHECK(price >= 0),
-  image_url TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-**Campos:**
-
-- `id`: Identificador único (UUID v4)
-- `name`: Nombre del collar (ej: "Gold Deluxe Necklace")
-- `description`: Descripción corta
-- `price`: Precio base en USD
-- `image_url`: URL en CDN
-- `created_at`, `updated_at`: Auditoría
-
-**Restricciones:**
-
-- `name` es único (no 2 collares iguales)
-- `price ≥ 0` (no precios negativos)
-
----
-
-#### **CHARMS** (Colgantes Personalizables)
-
-```sql
-CREATE TABLE charms (
-  id TEXT PRIMARY KEY, -- UUID
-  name TEXT NOT NULL UNIQUE,
-  description TEXT,
-  price DECIMAL(10, 2) NOT NULL CHECK(price >= 0),
-  color TEXT, -- "Gold", "Silver", "Rose Gold", etc.
-  image_url TEXT,
-  stock INT DEFAULT 100,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-**Campos:**
-
-- `id`: UUID único
-- `name`: Nombre del charm (ej: "Heart", "Star", "Moon")
-- `price`: Precio adicional en USD
-- `color`: Hex color o nombre (usado para filtros futuros)
-- `stock`: Cantidad disponible (validar en backend)
-- `image_url`: URL en CDN
-
----
-
-#### **ORDERS** (Órdenes) - Estructura Real Implementada
+**Estado:** Los productos están hardcodeados en `server/routes/products.ts`, no existe como tabla en la base de datos.
 
 ```typescript
-interface Order {
-  id: string; // UUID generado
-  product_id: string; // ID del producto (collar base)
-  size: "S" | "M" | "L"; // Tamaño del collar
-  collarColor: string; // ID del color del collar
-  petName: string; // Nombre de la mascota
-  customizations: {
-    letters: Array<{
-      letter: string; // Letra individual
-      colorId: string; // ID del color de la letra
-    }>;
-    shapes: Array<{
-      shapeId: string; // ID de la forma seleccionada
-    }>;
-  };
-  total_price: number; // Precio total calculado
-  status: string; // "pending" | "completed"
+// Estructura en código (server/routes/products.ts)
+interface Product {
+  id: string; // UUID
+  name: string; // "Pet Charm Collar"
+  description: string;
+  price: number; // 15.0 USD
+  image_url: string; // "/necklace.jpg"
   created_at: string; // ISO timestamp
   updated_at: string; // ISO timestamp
 }
@@ -1130,80 +1142,199 @@ interface Order {
 
 **Campos:**
 
-- `id`: Número de orden único (UUID v4 generado)
-- `product_id`: Referencia al collar base
-- `size`: Tamaño del collar (S, M, L)
-- `collarColor`: ID del color seleccionado para el collar (13 opciones disponibles)
-- `petName`: Nombre de la mascota ingresado por el usuario
-- `customizations.letters`: Array de letras personalizadas (máximo 12 letras)
-- `customizations.shapes`: Array de formas/charm shapes seleccionadas (máximo 9 formas)
-- `total_price`: Precio total calculado
-- `status`: Estado de la orden (por defecto "pending")
+- `id`: Identificador único (UUID v4)
+- `name`: Nombre del collar ("Pet Charm Collar")
+- `description`: Descripción del producto
+- `price`: Precio base en USD (fijo: $15.00)
+- `image_url`: Ruta a la imagen en `/public/`
 - `created_at`, `updated_at`: Timestamps ISO
+
+**Nota:** Actualmente solo hay 1 producto hardcodeado. Para agregar más productos, editar `server/routes/products.ts`.
+
+---
+
+#### **SHAPES** (Formas/Charm Shapes) - Hardcoded
+
+**Estado:** Las formas están hardcodeadas en `server/routes/shapes.ts`, no existen como tabla en la base de datos.
+
+```typescript
+// Estructura en código (server/routes/shapes.ts)
+interface Shape {
+  id: string; // "shape-unicorn", "shape-dog-face", etc.
+  name: string; // "Unicornio", "Carita de perrito", etc.
+  emoji: string; // "🦄", "🐶", etc.
+  description: string; // Descripción corta
+}
+```
+
+**Campos:**
+
+- `id`: Identificador único (string, no UUID)
+- `name`: Nombre de la forma en español
+- `emoji`: Emoji representativo
+- `description`: Descripción corta
+
+**Nota:** Actualmente hay más de 30 formas disponibles (37 formas). Para agregar más, editar `server/routes/shapes.ts`.
+
+---
+
+#### **COLORS** (Colores para Letras) - Hardcoded
+
+**Estado:** Los colores están hardcodeados en `server/routes/shapes.ts`, no existen como tabla en la base de datos.
+
+```typescript
+// Estructura en código (server/routes/shapes.ts)
+interface Color {
+  id: string; // "color-orange", "color-green", etc.
+  name: string; // "Orange", "Green", etc.
+  hex: string; // "#FF6B35", "#00B359", etc.
+  rgb: string; // "255, 107, 53", "0, 179, 89", etc.
+}
+```
+
+**Campos:**
+
+- `id`: Identificador único (string)
+- `name`: Nombre del color en inglés
+- `hex`: Código hexadecimal del color
+- `rgb`: Valores RGB separados por comas
+
+**Nota:** Actualmente hay 10 colores disponibles. Para agregar más, editar `server/routes/shapes.ts`.
+
+---
+
+#### **USERS** (Usuarios) - Supabase PostgreSQL
+
+**Estado:** Tabla en Supabase PostgreSQL, gestionada por Supabase Auth.
+
+```sql
+-- Tabla generada automáticamente por Supabase Auth
+CREATE TABLE users (
+  id UUID PRIMARY KEY REFERENCES auth.users(id),
+  email TEXT UNIQUE NOT NULL,
+  full_name TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+**Campos:**
+
+- `id`: UUID del usuario (referencia a `auth.users`)
+- `email`: Email único del usuario
+- `full_name`: Nombre completo del usuario
+- `created_at`, `updated_at`: Timestamps automáticos
+
+**Nota:** La autenticación se maneja completamente por Supabase Auth. Los usuarios se crean automáticamente al registrarse.
+
+---
+
+#### **ORDERS** (Órdenes) - Supabase PostgreSQL
+
+**Estado:** Tabla en Supabase PostgreSQL, creada y gestionada desde el frontend.
+
+```sql
+-- Tabla en Supabase PostgreSQL
+CREATE TABLE orders (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id),
+  product_id TEXT NOT NULL,
+  size TEXT NOT NULL CHECK (size IN ('S', 'M', 'L')),
+  collar_color TEXT NOT NULL,
+  pet_name TEXT NOT NULL,
+  customizations JSONB NOT NULL,
+  total_price DECIMAL(10, 2) NOT NULL CHECK (total_price >= 0),
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'cancelled')),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+**Estructura TypeScript:**
+
+```typescript
+interface Order {
+  id: string; // UUID generado por Supabase
+  user_id: string; // UUID del usuario (FK a users)
+  product_id: string; // ID del producto (referencia al producto hardcodeado)
+  size: "S" | "M" | "L"; // Tamaño del collar
+  collar_color: string; // ID del color del collar (ej: "collar-red")
+  pet_name: string; // Nombre de la mascota
+  customizations: {
+    letters: Array<{
+      letter: string; // Letra individual (máximo 12 letras)
+      colorId: string; // ID del color de la letra (ej: "color-orange")
+    }>;
+    shapes: Array<{
+      shapeId: string; // ID de la forma seleccionada (ej: "shape-unicorn")
+    }>; // Máximo 9 formas
+  };
+  total_price: number; // Precio total calculado
+  status: "pending" | "completed" | "cancelled"; // Estado de la orden
+  created_at: string; // ISO timestamp generado por Supabase
+  updated_at: string; // ISO timestamp generado por Supabase
+}
+```
+
+**Campos:**
+
+- `id`: UUID único generado automáticamente por Supabase
+- `user_id`: Referencia al usuario que creó la orden (FK a `users`)
+- `product_id`: ID del producto (referencia al producto hardcodeado)
+- `size`: Tamaño del collar ("S", "M" o "L")
+- `collar_color`: ID del color seleccionado para el collar (13 opciones disponibles)
+- `pet_name`: Nombre de la mascota ingresado por el usuario
+- `customizations`: Objeto JSONB con:
+  - `letters`: Array de letras personalizadas (máximo 12 letras)
+  - `shapes`: Array de formas/charm shapes seleccionadas (máximo 9 formas)
+- `total_price`: Precio total calculado (precio base fijo: $15.00)
+- `status`: Estado de la orden (por defecto "pending")
+- `created_at`, `updated_at`: Timestamps automáticos generados por Supabase
 
 **Lógica:**
 
 - Una orden = 1 collar base + personalización (tamaño, color, nombre) + letras + formas
 - Precio total = precio_base_collar (fijo: $15.00)
-- Las órdenes se almacenan en memoria (Map<string, Order>) y se pierden al reiniciar el servidor
-- No hay base de datos real implementada (MVP)
-
----
-
-#### **ORDER_ITEMS** (Items de la Orden)
-
-```sql
-CREATE TABLE order_items (
-  id TEXT PRIMARY KEY, -- UUID
-  order_id TEXT NOT NULL,
-  charm_id TEXT NOT NULL,
-  quantity INT DEFAULT 1 CHECK(quantity > 0),
-  price_at_purchase DECIMAL(10, 2), -- snapshot del precio
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY(order_id) REFERENCES orders(id),
-  FOREIGN KEY(charm_id) REFERENCES charms(id)
-);
-```
-
-**Por qué existe:**
-
-- Conecta órdenes con charms
-- Guarda el precio en el momento (si charms después bajan de precio, la orden muestra el original)
+- Las órdenes se almacenan en Supabase PostgreSQL y persisten permanentemente
+- Row Level Security (RLS) en Supabase asegura que los usuarios solo vean sus propias órdenes
 
 ---
 
 ### 🔗 Relaciones
 
-| Relación              | Cardinalidad | Descripción                               |
-| --------------------- | ------------ | ----------------------------------------- |
-| PRODUCTS ↔ ORDERS    | 1 a N        | Un collar puede tener múltiples órdenes   |
-| ORDERS ↔ ORDER_ITEMS | 1 a N        | Una orden tiene múltiples charms          |
-| CHARMS ↔ ORDER_ITEMS | 1 a N        | Un charm puede estar en múltiples órdenes |
+| Relación           | Cardinalidad | Descripción                                    |
+| ------------------ | ------------ | ---------------------------------------------- |
+| USERS ↔ ORDERS     | 1 a N        | Un usuario puede tener múltiples órdenes       |
+| PRODUCTS ↔ ORDERS   | 1 a N        | Un producto puede estar en múltiples órdenes   |
+
+**Nota:** PRODUCTS, SHAPES y COLORS no tienen relaciones de base de datos porque están hardcodeados en el código. Solo se referencian por ID en las órdenes.
 
 ### 📌 Restricciones y Validaciones
 
-| Entidad     | Restricción           | Validación Backend                         |
-| ----------- | --------------------- | ------------------------------------------ |
-| PRODUCTS    | Precio ≥ 0            | `z.number().positive()`                    |
-| CHARMS      | Precio ≥ 0, Stock ≥ 0 | `z.number().min(0)`                        |
-| ORDERS      | Total ≥ 0             | Calcular en backend, no confiar en cliente |
-| ORDER_ITEMS | Quantity > 0          | `z.number().min(1)`                        |
+| Entidad  | Restricción                    | Validación                                    |
+| -------- | ------------------------------ | --------------------------------------------- |
+| PRODUCTS | Precio ≥ 0                     | Hardcoded en código (precio fijo: $15.00)     |
+| ORDERS   | Total ≥ 0, Size válido         | Validación en frontend antes de insertar      |
+| ORDERS   | Status válido                  | CHECK constraint en Supabase                  |
+| ORDERS   | Customizations estructura válida | Validación en frontend (máximo 12 letras, 9 formas) |
 
 ### 💡 Explicación No Técnica
 
-Imagina que tienes una **joyería:**
+Imagina que tienes una **tienda de collares personalizados:**
 
-- **PRODUCTS** = Los collares base disponibles
-- **CHARMS** = Los colgantes que puedes agregar
-- **ORDERS** = Cada venta que haces
-- **ORDER_ITEMS** = Qué colgantes lleva cada orden
+- **PRODUCTS** = El collar base disponible (hardcodeado en código, solo 1 producto)
+- **SHAPES** = Las formas/charm shapes que puedes agregar (hardcodeadas, más de 30 opciones)
+- **COLORS** = Los colores para personalizar letras (hardcodeados, 10 opciones)
+- **USERS** = Los usuarios registrados (en Supabase)
+- **ORDERS** = Cada orden personalizada que crea un usuario (en Supabase)
 
 Cuando un cliente compra:
 
-1. Elige un collar (PRODUCTS)
-2. Elige charms (CHARMS)
-3. Creas una ORDEN con ese collar
-4. Registras qué charms va llevando (ORDER_ITEMS)
+1. Elige el collar base (PRODUCTS - solo hay 1 opción)
+2. Personaliza tamaño, color del collar, nombre de mascota
+3. Selecciona letras personalizadas (hasta 12) con colores
+4. Selecciona formas/charm shapes (hasta 9)
+5. Crea una ORDEN que se guarda en Supabase con toda la personalización
 
 ---
 
@@ -1223,7 +1354,9 @@ Base URL para todos los endpoints: `http://localhost:8080/api/v1`
   - `500 Internal Server Error` - Error del servidor
 - **Formato de respuesta:** Todas las respuestas siguen el formato estándar con campos `success`, `data` y `error`
 
-### 📚 Endpoints del MVP
+### 📚 Endpoints del MVP (Implementados)
+
+**Nota importante:** Las órdenes se manejan directamente a través de Supabase desde el frontend. No hay endpoints de backend para órdenes. Ver sección [Gestión de Órdenes](#gestión-de-órdenes-vía-supabase) más abajo.
 
 ---
 
@@ -1236,36 +1369,38 @@ Obtener lista de productos (collar base).
 - Retorna un array con los productos disponibles (actualmente 1 producto: "Pet Charm Collar")
 - Cada producto incluye: id (UUID), name, description, price, image_url, created_at, updated_at
 - No requiere parámetros ni autenticación
+- Datos hardcodeados en `server/routes/products.ts`
+
+**Ejemplo de Response:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "name": "Pet Charm Collar",
+      "description": "Personalize your pet's collar with custom letters and charm shapes...",
+      "price": 15.0,
+      "image_url": "/necklace.jpg",
+      "created_at": "2025-01-01T00:00:00.000Z",
+      "updated_at": "2025-01-01T00:00:00.000Z"
+    }
+  ],
+  "error": null
+}
+```
 
 **Notas QA:**
 
 - Verificar que `id` es UUID válido
 - `price` debe ser positivo
 - `image_url` debe ser URL válida
-- Status 200
+- Status 200 siempre
 
 ---
 
-#### **2. GET /api/v1/charms**
-
-Obtener lista de charms disponibles.
-
-**Descripción:**
-
-- Retorna un array con todos los charms disponibles (6 charms: Heart, Star, Moon, Pearl, Diamond, Flower)
-- Cada charm incluye: id (UUID), name, description, price, color, image_url, stock, created_at, updated_at
-- No requiere parámetros ni autenticación
-
-**Notas QA:**
-
-- Verificar que al menos 5 charms estén disponibles
-- `stock` debe ser ≥ 0
-- Todos los IDs son UUIDs únicos
-- Sin duplicados
-
----
-
-#### **3. GET /api/v1/shapes**
+#### **2. GET /api/v1/shapes**
 
 Obtener lista de formas/charm shapes disponibles.
 
@@ -1275,16 +1410,41 @@ Obtener lista de formas/charm shapes disponibles.
 - Cada forma incluye: id (string), name, emoji, description
 - Formas incluyen: animales (unicornio, perro, gato, conejo, etc.), corazones, estrellas, flores, objetos mágicos, etc.
 - No requiere parámetros ni autenticación
+- Datos hardcodeados en `server/routes/shapes.ts`
+
+**Ejemplo de Response:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "shape-unicorn",
+      "name": "Unicornio",
+      "emoji": "🦄",
+      "description": "Magical unicorn charm"
+    },
+    {
+      "id": "shape-dog-face",
+      "name": "Carita de perrito",
+      "emoji": "🐶",
+      "description": "Dog face charm"
+    }
+    // ... más de 30 formas
+  ],
+  "error": null
+}
+```
 
 **Notas QA:**
 
-- Más de 30 formas disponibles
+- Más de 30 formas disponibles (actualmente 37 formas)
 - Cada forma tiene ID único, nombre, emoji y descripción
-- Formas incluyen: animales, corazones, estrellas, flores, etc.
+- Formas incluyen: animales, corazones, estrellas, flores, objetos mágicos, etc.
 
 ---
 
-#### **4. GET /api/v1/colors**
+#### **3. GET /api/v1/colors**
 
 Obtener lista de colores disponibles para letras personalizadas.
 
@@ -1294,131 +1454,140 @@ Obtener lista de colores disponibles para letras personalizadas.
 - Cada color incluye: id (string), name, hex (código hexadecimal), rgb (valores RGB)
 - Colores disponibles: Orange, Green, Pink, Blue, Yellow, Purple, Red, Lime, Cyan, Black
 - No requiere parámetros ni autenticación
+- Datos hardcodeados en `server/routes/shapes.ts`
+
+**Ejemplo de Response:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "color-orange",
+      "name": "Orange",
+      "hex": "#FF6B35",
+      "rgb": "255, 107, 53"
+    },
+    {
+      "id": "color-green",
+      "name": "Green",
+      "hex": "#00B359",
+      "rgb": "0, 179, 89"
+    }
+    // ... 10 colores totales
+  ],
+  "error": null
+}
+```
 
 **Notas QA:**
 
 - 10 colores disponibles
 - Cada color tiene ID único, nombre, hex y rgb
-- Colores usados para personalizar letras
+- Colores usados para personalizar letras en el collar
 
 ---
 
-#### **5. POST /api/v1/orders**
+#### **4. GET /api/ping**
 
-Crear una nueva orden.
+Endpoint de prueba para verificar que el servidor está funcionando.
 
 **Descripción:**
 
-- Crea una nueva orden con los datos del carrito personalizado
-- Requiere body JSON con: product_id, size (S|M|L), collarColor, petName, customizations (letters y shapes), total_price
-- Valida la estructura con Zod schema antes de procesar
-- Genera UUID único para la orden
-- Almacena la orden en memoria (Map) en el backend Express
-- También se guarda en Supabase si el usuario está autenticado (desde CheckoutPage)
+- Retorna un mensaje de ping simple
+- Útil para health checks y debugging
+- No requiere parámetros ni autenticación
 
-**Campos del Request:**
+**Ejemplo de Response:**
 
+```json
+{
+  "message": "ping"
+}
+```
+
+O si está configurado `PING_MESSAGE` en variables de entorno:
+
+```json
+{
+  "message": "custom ping message"
+}
+```
+
+---
+
+### 📦 Gestión de Órdenes vía Supabase
+
+**Importante:** Las órdenes NO se manejan a través de endpoints de backend. Se gestionan directamente desde el frontend usando el cliente de Supabase.
+
+#### **Crear Orden**
+
+Las órdenes se crean directamente en Supabase desde `CheckoutPage.tsx`:
+
+```typescript
+// Código en client/pages/CheckoutPage.tsx
+const { data: orderData, error } = await supabase
+  .from("orders")
+  .insert([
+    {
+      user_id: userId,
+      product_id: cart[0]?.product_id || "",
+      size: cart[0]?.size || "M",
+      collar_color: cart[0]?.collarColor || "collar-red",
+      pet_name: cart[0]?.petName || "Custom",
+      customizations: cart[0]?.customizations || {
+        letters: [],
+        shapes: [],
+      },
+      total_price: totalPrice,
+      status: "pending",
+    },
+  ])
+  .select()
+  .single();
+```
+
+**Campos de la Orden:**
+
+- `user_id`: ID del usuario autenticado (UUID de Supabase Auth)
 - `product_id`: ID del producto (collar base)
 - `size`: Tamaño del collar ("S", "M" o "L")
-- `collarColor`: ID del color del collar seleccionado
-- `petName`: Nombre de la mascota
+- `collar_color`: ID del color del collar seleccionado
+- `pet_name`: Nombre de la mascota
 - `customizations.letters`: Array de objetos con `letter` y `colorId`
 - `customizations.shapes`: Array de objetos con `shapeId`
-- `total_price`: Precio total calculado (debe ser positivo)
+- `total_price`: Precio total calculado
+- `status`: Estado de la orden ("pending", "completed", etc.)
 
-**Validación:**
+#### **Obtener Órdenes del Usuario**
 
-- Schema Zod valida todos los campos
-- `size` debe ser uno de: "S", "M", "L"
-- `total_price` debe ser un número positivo
-- `customizations` debe tener estructura válida
+Las órdenes se obtienen desde Supabase en `OrdersPage.tsx`:
 
-**Response:**
+```typescript
+// Código en client/pages/OrdersPage.tsx
+const { data: ordersData, error } = await supabase
+  .from("orders")
+  .select("*")
+  .eq("user_id", authData.session.user.id)
+  .order("created_at", { ascending: false });
+```
 
-- Retorna la orden creada con id, timestamps y todos los datos enviados
-- Status 200 si es exitoso
-- Status 400 si la validación falla
+**Características:**
 
-**Escenarios de Error:**
+- Solo retorna órdenes del usuario autenticado (filtrado por `user_id`)
+- Ordenadas por fecha de creación (más recientes primero)
+- Requiere autenticación (usuario debe estar logueado)
+- Row Level Security (RLS) en Supabase protege los datos
 
-- `VALIDATION_ERROR`: Cuando el schema Zod falla (campos inválidos, tipos incorrectos)
-- `NOT_FOUND`: Si el producto_id no existe (aunque actualmente no se valida en backend)
-- `INTERNAL_ERROR`: Errores del servidor no previstos
+**Ventajas de este enfoque:**
 
-**Notas QA:**
-
-- Validar que todos los charm_ids existen en DB
-- Calcular precio en backend (no confiar en cliente)
-- Verificar que total_price = precio_producto + suma(precios_charms)
-- Generar UUID único para order_id
-- NO permitir órdenes sin charms (0 charms OK, pero documentar)
-- Verificar stock de charms (si es > 0)
-
----
-
-#### **6. GET /api/v1/orders/:orderId**
-
-Obtener detalles de una orden específica.
-
-**Descripción:**
-
-- Retorna los detalles completos de una orden por su ID
-- Requiere orderId como parámetro en la URL (debe ser UUID válido)
-- Busca la orden en el almacenamiento en memoria (Map)
-- Si la orden no existe, retorna error 404
-
-**Response:**
-
-- Status 200: Retorna la orden completa con todos sus datos
-- Status 400: Si el orderId no tiene formato UUID válido
-- Status 404: Si la orden no existe en el almacenamiento
-
-**Notas QA:**
-
-- Validar que order_id es UUID válido
-- Si no existe, retornar 404
-- Datos son de solo lectura (snapshot de precios)
+- ✅ No necesita endpoints de backend adicionales
+- ✅ Seguridad a nivel de base de datos (RLS)
+- ✅ Escalabilidad automática con Supabase
+- ✅ Real-time capabilities disponibles (no usado en MVP)
+- ✅ Type-safe con TypeScript
 
 ---
-
-#### **7. GET /api/v1/orders**
-
-Listar todas las órdenes.
-
-**Descripción:**
-
-- Retorna un array con todas las órdenes almacenadas en memoria (Map)
-- No requiere parámetros ni autenticación
-- Útil para debugging y administración
-- En producción, debería requerir autenticación y filtrar por usuario
-
-**Response:**
-
-- Status 200: Retorna array de órdenes (puede estar vacío)
-- Cada orden incluye todos sus campos: id, product_id, size, collarColor, petName, customizations, total_price, status, timestamps
-
-**Notas QA:**
-
-- Retorna todas las órdenes sin filtros
-- Puede retornar array vacío si no hay órdenes
-- Status 200 siempre (a menos que haya error del servidor)
-
----
-
-### 🚨 Error Handling Global
-
-Todos los errores siguen un formato consistente con los campos:
-
-- `success`: false
-- `data`: null
-- `error`: objeto con `code`, `message` y opcionalmente `details`
-
-**Error Codes Comunes:**
-
-- `VALIDATION_ERROR` - Zod validation falló (campos inválidos, tipos incorrectos)
-- `NOT_FOUND` - Recurso no existe (orden, producto, etc.)
-- `CONFLICT` - Recurso ya existe (no usado en MVP actual)
-- `INTERNAL_ERROR` - Error del servidor (no se exponen detalles por seguridad)
 
 ---
 
@@ -1660,8 +1829,8 @@ Testean el flujo completo con Playwright (usuario interactúa con UI).
 
 **Casos a testear:**
 
-- Crear orden con datos correctos (Unit: validación de orden pasa, Integration: POST /api/v1/orders retorna orden válida, E2E: página de confirmación muestra número de orden)
-- Prevenir órdenes duplicadas (debounce) (Unit: función debounce funciona, Integration: segundo POST es ignorado, E2E: doble click en submit solo crea 1 orden)
+- Crear orden con datos correctos (Unit: validación de datos del carrito pasa, Integration: Supabase inserta orden correctamente, E2E: página de confirmación muestra número de orden)
+- Prevenir órdenes duplicadas (debounce) (Unit: función debounce funciona, Integration: segundo insert es ignorado, E2E: doble click en submit solo crea 1 orden)
 
 ### 🚨 Escenarios Negativos (Muy Importante)
 
@@ -1763,7 +1932,102 @@ Testean el flujo completo con Playwright (usuario interactúa con UI).
 
 ---
 
-## 10. Registro del Uso de IA
+## 10. 🚀 Despliegue y Producción
+
+### 🌐 **Aplicación en Vivo**
+
+<div align="center">
+
+# 🎉 **[PET CHARMS LOVERS - VISITA LA APLICACIÓN](https://petcharmslovers.netlify.app/)** 🎉
+
+**URL de Producción:** [https://petcharmslovers.netlify.app/](https://petcharmslovers.netlify.app/)
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/your-badge-id/deploy-status)](https://app.netlify.com/sites/petcharmslovers/deploys)
+
+</div>
+
+### 📋 Información de Despliegue
+
+**Plataforma:** Netlify  
+**Tipo de Despliegue:** Serverless Functions + Static Site Hosting  
+**Build Command:** `pnpm build:client`  
+**Publish Directory:** `dist/spa`  
+**Node Version:** 18.x  
+**Package Manager:** pnpm 10.14.0
+
+### 🔧 Configuración de Netlify
+
+#### **Archivo `netlify.toml`**
+
+```toml
+[build]
+  command = "pnpm build:client"
+  publish = "dist/spa"
+
+# Redirect all /api/* requests to the serverless function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api"
+  status = 200
+  force = true
+
+# SPA fallback - all other routes go to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+```
+
+#### **Variables de Entorno en Netlify**
+
+Las siguientes variables deben estar configuradas en Netlify Dashboard:
+
+- `VITE_SUPABASE_URL`: URL del proyecto Supabase
+- `VITE_SUPABASE_ANON_KEY`: Clave anónima pública de Supabase
+- `PING_MESSAGE`: Mensaje opcional para endpoint `/api/ping`
+
+**Configuración:**
+1. Ve a Netlify Dashboard → Site Settings → Environment Variables
+2. Agrega las variables de entorno necesarias
+3. Los cambios requieren un nuevo deploy para aplicarse
+
+### 🔄 Proceso de Despliegue
+
+#### **Despliegue Automático**
+
+1. **Push a `main` branch** → Despliegue automático a producción
+2. **Pull Request abierto** → Preview deploy automático (URL única por PR)
+3. **Build automático** ejecuta:
+   ```bash
+   pnpm install
+   pnpm build:client
+   ```
+4. **Netlify Functions** se construyen automáticamente desde `netlify/functions/`
+
+#### **Despliegue Manual**
+
+Si necesitas desplegar manualmente:
+
+```bash
+# 1. Build del proyecto
+pnpm build:client
+
+# 2. Deploy usando Netlify CLI
+netlify deploy --prod
+
+# O usando el dashboard web de Netlify
+```
+
+### 🔐 Seguridad
+
+- **HTTPS:** Habilitado automáticamente por Netlify
+- **CORS:** Configurado en Express para permitir requests desde el dominio de producción
+- **Environment Variables:** Secrets almacenados de forma segura en Netlify Dashboard
+- **Supabase RLS:** Row Level Security configurado en Supabase para proteger datos
+
+---
+
+## 11. Registro del Uso de IA
 
 ### 🤖 Prompts Clave Utilizados
 
@@ -1953,27 +2217,6 @@ Testean el flujo completo con Playwright (usuario interactúa con UI).
 
 ---
 
-### 🔄 Proceso de Iteración
-
-1. **Etapa 1:** IA genera propuesta completa (este documento)
-2. **Validación Humana:** Revisor técnico verifica:
-   - ¿Es realista el timeline?
-   - ¿Los riesgos están mitigados?
-   - ¿Hay scope creep?
-3. **Ajustes:** Humano aplica cambios, IA actualiza documento
-4. **Aprobación:** Go/No-Go para implementación
-
-### ⚠️ Riesgos Mitigados
-
-| Riesgo                    | Mitigación                                                   | Responsable      |
-| ------------------------- | ------------------------------------------------------------ | ---------------- |
-| **Scope creep**           | Historias claramente MUST/SHOULD, DoD estricto               | PM               |
-| **Errores de IA**         | Validación humana en cada sección, ejemplos verificables     | Tech Lead        |
-| **Estimaciones injustas** | Tickets pequeños (<1 día), con buffer para testing           | Scrum Master     |
-| **Security bypass**       | Validación Zod en backend, rate limiting, no secrets en repo | DevSecOps        |
-| **Database issues**       | Schema simple, FK constraints, seed data realista            | DBA              |
-| **Performance**           | Lazy load images, no N+1 queries, CDN para assets            | Performance Lead |
-
 ---
 
 ## 📌 Apéndice: Decisiones Técnicas Clave
@@ -2029,30 +2272,5 @@ Testean el flujo completo con Playwright (usuario interactúa con UI).
 - **Decisión:** Supabase ofrece el mejor balance entre simplicidad y funcionalidad para MVP
 
 ---
-
-## 🎯 Próximos Pasos
-
-Esta es la **Entrega 1: Documentación Completa**.
-
-**Etapa 2 (Siguiente):** Implementación del Backend
-
-- Setup DB + migrations
-- Endpoints API (GET /products, GET /charms, POST /orders)
-- Validación Zod + error handling
-- Tests (unit + integration)
-
-**Etapa 3:** Frontend + Integración
-
-- Landing, Product, Cart, Confirmation pages
-- State management (Zustand + React Query)
-- E2E tests (Playwright)
-
-**Etapa 4:** CI/CD + Deployment
-
-- GitHub Actions workflow
-- Auto-deploy a Netlify/Vercel
-- Environment secrets
-
-**Etapa 5:** QA, Optimización y Go-Live
 
 ---
