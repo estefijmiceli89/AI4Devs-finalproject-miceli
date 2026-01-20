@@ -84,10 +84,10 @@ El proyecto usa **Supabase** como base de datos principal y para la autenticaci�
 - ✅ Los perfiles de usuario también en Supabase
 - ✅ **Totalmente persistente:** Los datos nunca se pierden
 
-**Datos de Productos/Charms:**
+**Datos de Productos/Shapes:**
 
-- Los productos, charms, shapes y colores están **hardcodeados** en las rutas del servidor
-- Archivos: `server/routes/products.ts`, `server/routes/charms.ts`, `server/routes/shapes.ts`
+- Los productos, shapes y colores están **hardcodeados** en las rutas del servidor
+- Archivos: `server/routes/products.ts`, `server/routes/shapes.ts`
 - 💡 **Sugerencia:** Estos también podrían migrarse a Supabase en el futuro
 
 ## ▶️ Ejecutar el Proyecto
@@ -127,9 +127,6 @@ curl http://localhost:8080/api/ping
 
 # Probar productos
 curl http://localhost:8080/api/v1/products
-
-# Probar charms
-curl http://localhost:8080/api/v1/charms
 ```
 
 ## 🏗️ Estructura del Proyecto
@@ -192,7 +189,6 @@ pnpm format.fix       # Formatea código con Prettier
 ### Otros
 
 - `GET /api/ping` - Endpoint de prueba
-- `GET /api/demo` - Endpoint demo
 
 ## 🐛 Solución de Problemas
 

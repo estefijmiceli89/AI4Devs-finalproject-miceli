@@ -25,3 +25,15 @@ dist-ssr
 
 .config/
 !.env
+
+# Test coverage
+coverage/
+*.lcov
+
+# Playwright
+playwright-report/
+test-results/
+playwright/.cache/
+
+# E2E auth state
+tests/e2e/.auth/

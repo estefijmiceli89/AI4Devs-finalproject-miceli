@@ -1,9 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { handleDemo } from "./routes/demo";
 import { handleGetProducts } from "./routes/products";
-import { handleGetCharms } from "./routes/charms";
 import { handleGetShapes, handleGetColors } from "./routes/shapes";
 
 export function createServer() {
@@ -20,11 +18,8 @@ export function createServer() {
     res.json({ message: ping });
   });
 
-  app.get("/api/demo", handleDemo);
-
   // MVP API Routes (v1)
   app.get("/api/v1/products", handleGetProducts);
-  app.get("/api/v1/charms", handleGetCharms);
   app.get("/api/v1/shapes", handleGetShapes);
   app.get("/api/v1/colors", handleGetColors);
 
