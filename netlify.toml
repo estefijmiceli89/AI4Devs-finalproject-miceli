@@ -1,19 +1,5 @@
-[build]
-  base = "petcharms"
-  command = "pnpm install && pnpm run build"
-  publish = "dist/spa"
-
-[functions]
-  external_node_modules = ["express"]
-  node_bundler = "esbuild"
-  
-[[redirects]]
-  force = true
-  from = "/api/*"
-  status = 200
-  to = "/.netlify/functions/api/:splat"
-  
+# Simple Netlify configuration - Let UI handle build settings
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/index.html" 
   status = 200
