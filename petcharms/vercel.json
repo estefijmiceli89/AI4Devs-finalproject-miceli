@@ -1,15 +1,9 @@
 {
-  "functions": {
-    "server/index.ts": {
-      "runtime": "@vercel/node"
-    }
-  },
+  "buildCommand": "pnpm run build:client",
+  "outputDirectory": "dist/spa",
+  "installCommand": "pnpm install",
+  "framework": "vite",
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/server/index.ts"
-    }
-  ],
-  "buildCommand": "npm run build:client",
-  "outputDirectory": "dist/spa"
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
