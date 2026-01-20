@@ -1,8 +1,12 @@
 [build]
   base = "petcharms"
-  command = "npm run build"
+  command = "pnpm run build"
   functions = "netlify/functions" 
   publish = "dist/spa"
+  
+[build.environment]
+  NPM_FLAGS = "--version" # Disable npm
+  NODE_VERSION = "20"
 
 [functions]
   external_node_modules = ["express"]

@@ -1,0 +1,8 @@
+{
+  "plugins": [
+    {
+      "package": "netlify-plugin-pnpm",
+      "pinned_version": "1.0.10"
+    }
+  ]
+}
