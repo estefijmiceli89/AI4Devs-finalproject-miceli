@@ -1,8 +1,8 @@
 [build]
   base = "petcharms"
   command = "npm run build"
-  functions = "petcharms/netlify/functions"
-  publish = "petcharms/dist/spa"
+  functions = "netlify/functions" 
+  publish = "dist/spa"
 
 [functions]
   external_node_modules = ["express"]
