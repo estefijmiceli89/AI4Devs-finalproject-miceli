@@ -10,7 +10,7 @@ const handlePing = (_req: Request, res: Response) => {
 describe("GET /api/ping handler", () => {
   let mockReq: Partial<Request>;
   let mockRes: Partial<Response>;
-  let jsonResponse: any;
+  let jsonResponse: { message?: string };
 
   beforeEach(() => {
     jsonResponse = {};

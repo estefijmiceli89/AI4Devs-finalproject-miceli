@@ -49,7 +49,7 @@ describe("RegisterPage", () => {
 
   it("should allow typing in all fields", () => {
     renderWithRouter(<RegisterPage />);
-    
+
     const fullNameInput = screen.getByPlaceholderText(/John Doe/i);
     const emailInput = screen.getByPlaceholderText(/you@example.com/i);
     const passwordInputs = screen.getAllByPlaceholderText(/••••••••/i);
@@ -68,15 +68,14 @@ describe("RegisterPage", () => {
   it("should show error when form is submitted empty", async () => {
     const user = userEvent.setup();
     renderWithRouter(<RegisterPage />);
-    
+
     const submitButton = screen.getByRole("button", { name: /sign up/i });
     await user.click(submitButton);
 
     // Wait a bit for validation to run
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     // Check if error message appears (may or may not depending on validation timing)
-    const errorElement = screen.queryByText(/required/i);
     // This test verifies the form exists and can be submitted, validation is tested in E2E
     expect(submitButton).toBeInTheDocument();
   });

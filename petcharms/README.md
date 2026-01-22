@@ -903,6 +903,7 @@ graph TB
 4. **Supabase:** Mismo servicio que en desarrollo, ahora con variables de entorno configuradas en Netlify Dashboard.
 
 **Ventajas de esta arquitectura:**
+
 - ✅ Mismo código para desarrollo y producción (menos bugs)
 - ✅ Serverless = escalabilidad automática sin gestión de servidores
 - ✅ Netlify CDN = performance global excelente
@@ -1302,20 +1303,20 @@ interface Order {
 
 ### 🔗 Relaciones
 
-| Relación           | Cardinalidad | Descripción                                    |
-| ------------------ | ------------ | ---------------------------------------------- |
-| USERS ↔ ORDERS     | 1 a N        | Un usuario puede tener múltiples órdenes       |
-| PRODUCTS ↔ ORDERS   | 1 a N        | Un producto puede estar en múltiples órdenes   |
+| Relación           | Cardinalidad | Descripción                                  |
+| ------------------ | ------------ | -------------------------------------------- |
+| USERS ↔ ORDERS    | 1 a N        | Un usuario puede tener múltiples órdenes     |
+| PRODUCTS ↔ ORDERS | 1 a N        | Un producto puede estar en múltiples órdenes |
 
 **Nota:** PRODUCTS, SHAPES y COLORS no tienen relaciones de base de datos porque están hardcodeados en el código. Solo se referencian por ID en las órdenes.
 
 ### 📌 Restricciones y Validaciones
 
-| Entidad  | Restricción                    | Validación                                    |
-| -------- | ------------------------------ | --------------------------------------------- |
-| PRODUCTS | Precio ≥ 0                     | Hardcoded en código (precio fijo: $15.00)     |
-| ORDERS   | Total ≥ 0, Size válido         | Validación en frontend antes de insertar      |
-| ORDERS   | Status válido                  | CHECK constraint en Supabase                  |
+| Entidad  | Restricción                      | Validación                                          |
+| -------- | -------------------------------- | --------------------------------------------------- |
+| PRODUCTS | Precio ≥ 0                       | Hardcoded en código (precio fijo: $15.00)           |
+| ORDERS   | Total ≥ 0, Size válido           | Validación en frontend antes de insertar            |
+| ORDERS   | Status válido                    | CHECK constraint en Supabase                        |
 | ORDERS   | Customizations estructura válida | Validación en frontend (máximo 12 letras, 9 formas) |
 
 ### 💡 Explicación No Técnica
@@ -1987,6 +1988,7 @@ Las siguientes variables deben estar configuradas en Netlify Dashboard:
 - `PING_MESSAGE`: Mensaje opcional para endpoint `/api/ping`
 
 **Configuración:**
+
 1. Ve a Netlify Dashboard → Site Settings → Environment Variables
 2. Agrega las variables de entorno necesarias
 3. Los cambios requieren un nuevo deploy para aplicarse

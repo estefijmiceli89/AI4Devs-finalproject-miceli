@@ -4,6 +4,32 @@ import { BrowserRouter } from "react-router-dom";
 import OrdersPage from "../../../client/pages/OrdersPage";
 import { supabase } from "@/lib/supabase";
 
+type SessionResponse = {
+  data: {
+    session: {
+      user: { id: string; email: string };
+    } | null;
+  };
+  error: null;
+};
+
+type OrdersResponse = {
+  data: Array<Record<string, unknown>>;
+  error: null;
+};
+
+type UserProfileResponse = {
+  data: { id: string; email: string; full_name: string };
+  error: null;
+};
+
+type SupabaseQuery = {
+  select: () => SupabaseQuery;
+  eq: () => SupabaseQuery;
+  single: () => Promise<UserProfileResponse>;
+  order: () => Promise<OrdersResponse>;
+};
+
 const mockNavigate = vi.fn();
 
 vi.mock("react-router-dom", async () => {
@@ -40,6 +66,21 @@ const renderWithRouter = (component: React.ReactElement) => {
 };
 
 describe("OrdersPage", () => {
+  const createMockFrom = (
+    orders: OrdersResponse["data"] = [],
+  ): SupabaseQuery => ({
+    select: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    single: vi.fn().mockResolvedValue({
+      data: { id: "user-1", email: "test@example.com", full_name: "Test User" },
+      error: null,
+    }),
+    order: vi.fn().mockResolvedValue({
+      data: orders,
+      error: null,
+    }),
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockNavigate.mockClear();
@@ -53,25 +94,12 @@ describe("OrdersPage", () => {
         },
       },
       error: null,
-    } as any);
+    } satisfies SessionResponse);
 
-    const mockFrom = vi.fn().mockReturnValue({
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({
-        data: { id: "user-1", email: "test@example.com", full_name: "Test User" },
-        error: null,
-      }),
-      order: vi.fn().mockResolvedValue({
-        data: [],
-        error: null,
-      }),
-    });
-
-    vi.mocked(supabase.from).mockImplementation(mockFrom as any);
+    vi.mocked(supabase.from).mockImplementation(() => createMockFrom());
 
     renderWithRouter(<OrdersPage />);
-    
+
     await waitFor(() => {
       expect(screen.getByText(/My Orders/i)).toBeInTheDocument();
     });
@@ -79,9 +107,9 @@ describe("OrdersPage", () => {
 
   it("should show loading state initially", () => {
     vi.mocked(supabase.auth.getSession).mockImplementation(
-      () => new Promise(() => {}) as any // Never resolves
+      () => new Promise(() => undefined), // Never resolves
     );
-    
+
     renderWithRouter(<OrdersPage />);
     expect(screen.getByText("Loading your orders...")).toBeInTheDocument();
   });
@@ -90,13 +118,16 @@ describe("OrdersPage", () => {
     vi.mocked(supabase.auth.getSession).mockResolvedValue({
       data: { session: null },
       error: null,
-    } as any);
+    } satisfies SessionResponse);
 
     renderWithRouter(<OrdersPage />);
-    
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith("/login");
-    }, { timeout: 3000 });
+
+    await waitFor(
+      () => {
+        expect(mockNavigate).toHaveBeenCalledWith("/login");
+      },
+      { timeout: 3000 },
+    );
   });
 
   it("should show empty state when no orders", async () => {
@@ -107,27 +138,19 @@ describe("OrdersPage", () => {
         },
       },
       error: null,
-    } as any);
+    } satisfies SessionResponse);
 
-    const mockFrom = vi.fn().mockReturnValue({
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({
-        data: { id: "user-1", email: "test@example.com", full_name: "Test User" },
-        error: null,
-      }),
-      order: vi.fn().mockResolvedValue({
-        data: [],
-        error: null,
-      }),
-    });
-
-    vi.mocked(supabase.from).mockImplementation(mockFrom as any);
+    vi.mocked(supabase.from).mockImplementation(() => createMockFrom([]));
 
     renderWithRouter(<OrdersPage />);
-    
-    await waitFor(() => {
-      expect(screen.getByText(/haven't placed any orders/i)).toBeInTheDocument();
-    }, { timeout: 3000 });
+
+    await waitFor(
+      () => {
+        expect(
+          screen.getByText(/haven't placed any orders/i),
+        ).toBeInTheDocument();
+      },
+      { timeout: 3000 },
+    );
   });
 });

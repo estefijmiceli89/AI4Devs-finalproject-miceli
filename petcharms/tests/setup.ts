@@ -12,7 +12,7 @@ const localStorageMock = {
   removeItem: vi.fn(),
   clear: vi.fn(),
 };
-global.localStorage = localStorageMock as any;
+global.localStorage = localStorageMock as unknown as Storage;
 
 // Mock window.matchMedia for responsive hooks
 Object.defineProperty(window, "matchMedia", {

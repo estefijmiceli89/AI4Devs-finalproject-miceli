@@ -21,11 +21,12 @@ test.describe("Purchase Flow", () => {
     await expect(page).toHaveURL(/.*\/product/);
     await productPage.setPetName("MAX");
     await productPage.selectSize("M");
-    
+
     // Wait for product data to load
     await page.waitForTimeout(1000);
-    
+
     await productPage.addToCart();
+    await productPage.goToCart();
 
     // Step 3: Cart page
     await expect(page).toHaveURL(/.*\/cart/);
@@ -40,7 +41,7 @@ test.describe("Purchase Flow", () => {
       address: "123 Test St",
       phone: "1234567890",
     });
-    
+
     await checkoutPage.confirmOrder();
 
     // Step 5: Confirmation page

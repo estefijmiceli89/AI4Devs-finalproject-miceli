@@ -1,4 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.e2e.local" });
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -10,13 +13,20 @@ export default defineConfig({
   use: {
     baseURL: "http://localhost:8080",
     trace: "on-first-retry",
-    storageState: "tests/e2e/.auth/storageState.json",
   },
 
   projects: [
     {
+      name: "setup",
+      testMatch: /.*\.setup\.ts/,
+    },
+    {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "tests/e2e/.auth/storageState.json",
+      },
+      dependencies: ["setup"],
     },
   ],
 

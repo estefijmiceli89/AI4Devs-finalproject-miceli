@@ -37,3 +37,6 @@ playwright/.cache/
 
 # E2E auth state
 tests/e2e/.auth/
+
+# Local env for E2E
+.env.e2e.local

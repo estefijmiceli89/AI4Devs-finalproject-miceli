@@ -2,6 +2,13 @@ import { describe, it, expect } from "vitest";
 import request from "supertest";
 import { createServer } from "@server/index";
 
+type Color = {
+  id: string;
+  name: string;
+  hex: string;
+  rgb: string;
+};
+
 describe("GET /api/v1/colors", () => {
   const app = createServer();
 
@@ -38,26 +45,26 @@ describe("GET /api/v1/colors", () => {
 
   it("should return colors with valid hex format", async () => {
     const response = await request(app).get("/api/v1/colors");
-    const colors = response.body.data;
+    const colors = response.body.data as Color[];
 
-    colors.forEach((color: any) => {
+    colors.forEach((color) => {
       expect(color.hex).toMatch(/^#[0-9A-F]{6}$/i);
     });
   });
 
   it("should return colors with valid rgb format", async () => {
     const response = await request(app).get("/api/v1/colors");
-    const colors = response.body.data;
+    const colors = response.body.data as Color[];
 
-    colors.forEach((color: any) => {
+    colors.forEach((color) => {
       expect(color.rgb).toMatch(/^\d+,\s*\d+,\s*\d+$/);
     });
   });
 
   it("should include orange color", async () => {
     const response = await request(app).get("/api/v1/colors");
-    const colors = response.body.data;
-    const orangeColor = colors.find((c: any) => c.id === "color-orange");
+    const colors = response.body.data as Color[];
+    const orangeColor = colors.find((color) => color.id === "color-orange");
 
     expect(orangeColor).toBeDefined();
     expect(orangeColor.name).toBe("Orange");

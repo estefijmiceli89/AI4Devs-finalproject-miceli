@@ -64,7 +64,7 @@ describe("LoginPage", () => {
     const user = userEvent.setup();
     renderWithRouter(<LoginPage />);
     const emailInput = screen.getByPlaceholderText(/you@example.com/i);
-    
+
     await user.type(emailInput, "test@example.com");
     expect(emailInput).toHaveValue("test@example.com");
   });
@@ -73,7 +73,7 @@ describe("LoginPage", () => {
     const user = userEvent.setup();
     renderWithRouter(<LoginPage />);
     const passwordInput = screen.getByPlaceholderText(/••••••••/i);
-    
+
     await user.type(passwordInput, "password123");
     expect(passwordInput).toHaveValue("password123");
   });

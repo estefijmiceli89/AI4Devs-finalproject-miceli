@@ -2,11 +2,27 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Request, Response, NextFunction } from "express";
 import { handleGetProducts } from "../../../../server/routes/products";
 
+type Product = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image_url: string;
+  created_at: string;
+  updated_at: string;
+};
+
+type ProductsResponse = {
+  success?: boolean;
+  error?: null;
+  data?: Product[];
+};
+
 describe("handleGetProducts", () => {
   let mockReq: Partial<Request>;
   let mockRes: Partial<Response>;
   let mockNext: NextFunction;
-  let jsonResponse: any;
+  let jsonResponse: ProductsResponse;
 
   beforeEach(() => {
     jsonResponse = {};

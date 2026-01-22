@@ -4,11 +4,13 @@ export class BasePage {
   readonly page: Page;
   readonly header: Locator;
   readonly logo: Locator;
+  readonly cartLink: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.header = page.locator("nav");
     this.logo = page.locator('a[href="/"]');
+    this.cartLink = page.getByRole("link", { name: /cart/i });
   }
 
   async goto(path: string = "/") {

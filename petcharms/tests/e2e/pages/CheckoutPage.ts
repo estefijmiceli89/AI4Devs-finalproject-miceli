@@ -14,7 +14,9 @@ export class CheckoutPage extends BasePage {
     this.emailInput = page.getByLabel(/email/i);
     this.addressInput = page.getByLabel(/shipping address/i);
     this.phoneInput = page.getByLabel(/phone/i);
-    this.confirmOrderButton = page.getByRole("button", { name: /confirm order/i });
+    this.confirmOrderButton = page.getByRole("button", {
+      name: /confirm order/i,
+    });
   }
 
   async fillForm(data: {

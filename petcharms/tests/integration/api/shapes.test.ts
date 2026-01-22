@@ -2,6 +2,13 @@ import { describe, it, expect } from "vitest";
 import request from "supertest";
 import { createServer } from "@server/index";
 
+type Shape = {
+  id: string;
+  name: string;
+  emoji: string;
+  description: string;
+};
+
 describe("GET /api/v1/shapes", () => {
   const app = createServer();
 
@@ -38,7 +45,7 @@ describe("GET /api/v1/shapes", () => {
 
   it("should include specific shapes", async () => {
     const response = await request(app).get("/api/v1/shapes");
-    const shapeIds = response.body.data.map((s: any) => s.id);
+    const shapeIds = (response.body.data as Shape[]).map((shape) => shape.id);
 
     expect(shapeIds).toContain("shape-unicorn");
     expect(shapeIds).toContain("shape-heart-paw");

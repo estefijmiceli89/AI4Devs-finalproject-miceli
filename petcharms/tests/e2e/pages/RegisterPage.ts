@@ -11,9 +11,9 @@ export class RegisterPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.fullNameInput = page.getByPlaceholderText(/John Doe/i);
-    this.emailInput = page.getByPlaceholderText(/you@example.com/i);
-    const passwordInputs = page.getAllByPlaceholderText(/••••••••/i);
+    this.fullNameInput = page.getByPlaceholder(/John Doe/i);
+    this.emailInput = page.getByPlaceholder(/you@example.com/i);
+    const passwordInputs = page.getAllByPlaceholder(/••••••••/i);
     this.passwordInput = passwordInputs[0];
     this.confirmPasswordInput = passwordInputs[1];
     this.submitButton = page.getByRole("button", { name: /sign up/i });

@@ -53,7 +53,7 @@ describe("CheckoutPage", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock localStorage before rendering
     Object.defineProperty(window, "localStorage", {
       value: {
@@ -73,29 +73,37 @@ describe("CheckoutPage", () => {
 
   it("should render checkout heading", async () => {
     renderWithRouter(<CheckoutPage />);
-    await waitFor(() => {
-      expect(screen.getByText("Checkout")).toBeInTheDocument();
-    }, { timeout: 2000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText("Checkout")).toBeInTheDocument();
+      },
+      { timeout: 2000 },
+    );
   });
 
   it("should render all form fields", async () => {
     renderWithRouter(<CheckoutPage />);
-    await waitFor(() => {
-      expect(screen.getByPlaceholderText(/John Doe/i)).toBeInTheDocument();
-      expect(screen.getByPlaceholderText(/john@example.com/i)).toBeInTheDocument();
-      expect(
-        screen.getByPlaceholderText(/123 Main St, City, State, ZIP Code/i),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByPlaceholderText(/\+1 \(555\) 000-0000/i),
-      ).toBeInTheDocument();
-    }, { timeout: 2000 });
+    await waitFor(
+      () => {
+        expect(screen.getByPlaceholderText(/John Doe/i)).toBeInTheDocument();
+        expect(
+          screen.getByPlaceholderText(/john@example.com/i),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByPlaceholderText(/123 Main St, City, State, ZIP Code/i),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByPlaceholderText(/\+1 \(555\) 000-0000/i),
+        ).toBeInTheDocument();
+      },
+      { timeout: 2000 },
+    );
   });
 
   it("should allow typing in form fields", async () => {
     const user = userEvent.setup();
     renderWithRouter(<CheckoutPage />);
-    
+
     const fullNameInput = screen.getByPlaceholderText(/John Doe/i);
     const emailInput = screen.getByPlaceholderText(/john@example.com/i);
     const addressInput = screen.getByPlaceholderText(

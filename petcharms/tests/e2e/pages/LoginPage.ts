@@ -9,10 +9,10 @@ export class LoginPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.emailInput = page.getByPlaceholderText(/you@example.com/i);
-    this.passwordInput = page.getByPlaceholderText(/••••••••/i);
+    this.emailInput = page.getByPlaceholder(/you@example.com/i);
+    this.passwordInput = page.getByPlaceholder(/••••••••/i);
     this.submitButton = page.getByRole("button", { name: /sign in/i });
-    this.errorMessage = page.locator(".text-red-600");
+    this.errorMessage = page.locator("p.text-red-600");
   }
 
   async login(email: string, password: string) {

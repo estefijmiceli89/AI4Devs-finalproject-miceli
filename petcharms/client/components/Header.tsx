@@ -6,7 +6,6 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -16,7 +15,6 @@ export default function Header() {
         const { data: authData } = await supabase.auth.getSession();
         if (authData.session) {
           setIsLoggedIn(true);
-          setUserEmail(authData.session.user.email || "");
         } else {
           setIsLoggedIn(false);
         }
@@ -32,7 +30,6 @@ export default function Header() {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setIsLoggedIn(!!session);
-        setUserEmail(session?.user.email || "");
       },
     );
 
@@ -54,7 +51,6 @@ export default function Header() {
       }
 
       setIsLoggedIn(false);
-      setUserEmail("");
 
       toast({
         title: "Logged out",
