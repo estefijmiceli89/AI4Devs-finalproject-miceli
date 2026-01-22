@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Sparkles, CheckCircle2, Package, Clock } from "lucide-react";
+import { CheckCircle2, Package, Clock } from "lucide-react";
+import Header from "@/components/Header";
 
 interface CartItem {
   product_id: string;
@@ -54,19 +55,7 @@ export default function OrderConfirmation() {
   if (!order) {
     return (
       <div className="min-h-screen bg-white">
-        <nav className="sticky top-0 z-50 bg-white border-b border-neutral-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <Link
-              to="/"
-              className="flex items-center gap-2 hover:opacity-70 transition"
-            >
-              <Sparkles className="w-6 h-6 text-amber-600" />
-              <span className="text-xl font-semibold text-neutral-900">
-                🐾 PetCharms
-              </span>
-            </Link>
-          </div>
-        </nav>
+        <Header />
         <div className="text-center py-16">
           <p className="text-neutral-600 mb-4">No order found</p>
           <Link
@@ -83,19 +72,7 @@ export default function OrderConfirmation() {
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-white border-b border-neutral-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Link
-            to="/"
-            className="flex items-center gap-2 hover:opacity-70 transition"
-          >
-            <Sparkles className="w-6 h-6 text-amber-600" />
-            <span className="text-xl font-semibold text-neutral-900">
-              🐾 PetCharms
-            </span>
-          </Link>
-        </div>
-      </nav>
+      <Header />
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Success Message */}

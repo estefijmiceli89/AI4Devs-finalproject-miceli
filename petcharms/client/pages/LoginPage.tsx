@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -40,7 +41,14 @@ export default function LoginPage() {
         description: "You have been logged in successfully.",
       });
 
-      navigate("/orders");
+      const redirectParam = new URLSearchParams(location.search).get(
+        "redirect",
+      );
+      const redirectTo =
+        redirectParam ||
+        (location.state as { from?: string } | null)?.from ||
+        "/orders";
+      navigate(redirectTo, { replace: true });
     } catch (err) {
       const message = err instanceof Error ? err.message : "An error occurred";
       setError(message);

@@ -28,6 +28,7 @@ interface FormErrors {
   fullName?: string;
   email?: string;
   address?: string;
+  phone?: string;
 }
 
 export default function CheckoutPage() {
@@ -62,10 +63,35 @@ export default function CheckoutPage() {
     }
   }, [navigate]);
 
+  useEffect(() => {
+    const loadUserEmail = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          throw error;
+        }
+        const email = data.session?.user?.email;
+        if (email) {
+          setFormData((prev) => (prev.email ? prev : { ...prev, email }));
+        }
+      } catch (error) {
+        console.error("Error loading user email:", error);
+      }
+    };
+
+    loadUserEmail();
+  }, []);
+
   // Validate email
   const validateEmail = (email: string): boolean => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
+  };
+
+  const validatePhone = (phone: string): boolean => {
+    if (!phone.trim()) return true;
+    const re = /^\d+$/;
+    return re.test(phone);
   };
 
   // Validate form
@@ -84,6 +110,10 @@ export default function CheckoutPage() {
 
     if (!formData.address.trim()) {
       newErrors.address = "Address is required";
+    }
+
+    if (!validatePhone(formData.phone)) {
+      newErrors.phone = "Phone must contain only numbers";
     }
 
     setErrors(newErrors);
@@ -310,9 +340,18 @@ export default function CheckoutPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, phone: e.target.value })
                   }
-                  className="w-full px-4 py-3 rounded-lg border-2 border-neutral-200 focus:outline-none focus:border-amber-600 transition"
+                  className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-amber-600 transition ${
+                    errors.phone
+                      ? "border-red-500 bg-red-50"
+                      : "border-neutral-200"
+                  }`}
                   placeholder="+1 (555) 000-0000"
                 />
+                {errors.phone && (
+                  <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-4 h-4" /> {errors.phone}
+                  </p>
+                )}
               </div>
 
               {/* Submit Button */}

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Trash2, ChevronRight, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
+import { supabase } from "@/lib/supabase";
 
 interface CartItem {
   product_id: string;
@@ -51,6 +52,28 @@ export default function CartPage() {
       title: "Cart cleared",
       description: "All items removed.",
     });
+  };
+
+  const handleProceedToCheckout = async () => {
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        throw error;
+      }
+      if (!data.session) {
+        navigate("/login?redirect=/checkout", { state: { from: "/checkout" } });
+        return;
+      }
+      navigate("/checkout");
+    } catch (error) {
+      console.error("Error checking session:", error);
+      toast({
+        title: "Error",
+        description: "Please log in to continue to checkout",
+        variant: "destructive",
+      });
+      navigate("/login?redirect=/checkout", { state: { from: "/checkout" } });
+    }
   };
 
   const totalPrice = cart.reduce((sum, item) => sum + item.total_price, 0);
@@ -224,7 +247,7 @@ export default function CartPage() {
                 </div>
 
                 <button
-                  onClick={() => navigate("/checkout")}
+                  onClick={handleProceedToCheckout}
                   className="w-full px-6 py-3 bg-neutral-900 text-white rounded-lg font-semibold hover:bg-neutral-800 transition flex items-center justify-center gap-2 mb-3"
                 >
                   Proceed to Checkout

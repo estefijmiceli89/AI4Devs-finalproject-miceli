@@ -242,6 +242,9 @@ export default function ProductPage() {
 
   const totalCharms = charms.length;
   const canAddMore = totalCharms < MAX_CHARMS;
+  const handleBackToShop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   if (loading) {
     return (
@@ -657,6 +660,7 @@ export default function ProductPage() {
 
             <Link
               to="/"
+              onClick={handleBackToShop}
               className="w-full px-6 py-3 text-center border border-neutral-300 text-neutral-900 rounded-lg font-medium hover:border-neutral-900 transition"
             >
               Back to Shop
