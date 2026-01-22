@@ -8,6 +8,7 @@ export class CheckoutPage extends BasePage {
   readonly phoneInput: Locator;
   readonly confirmOrderButton: Locator;
 
+  
   constructor(page: Page) {
     super(page);
     this.fullNameInput = page.getByLabel(/full name/i);
