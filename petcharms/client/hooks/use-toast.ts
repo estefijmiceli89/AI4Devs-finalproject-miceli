@@ -19,27 +19,21 @@ function genId() {
   return count.toString();
 }
 
-type ActionType =
-  | "ADD_TOAST"
-  | "UPDATE_TOAST"
-  | "DISMISS_TOAST"
-  | "REMOVE_TOAST";
-
 type Action =
   | {
-      type: ActionType;
+      type: "ADD_TOAST";
       toast: ToasterToast;
     }
   | {
-      type: ActionType;
-      toast: Partial<ToasterToast>;
+      type: "UPDATE_TOAST";
+      toast: Partial<ToasterToast> & { id: ToasterToast["id"] };
     }
   | {
-      type: ActionType;
+      type: "DISMISS_TOAST";
       toastId?: ToasterToast["id"];
     }
   | {
-      type: ActionType;
+      type: "REMOVE_TOAST";
       toastId?: ToasterToast["id"];
     };
 
