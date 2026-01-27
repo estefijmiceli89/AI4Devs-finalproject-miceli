@@ -69,9 +69,13 @@ export default function Header() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-neutral-200">
+    <nav
+      data-testid="header-nav"
+      className="sticky top-0 z-50 bg-white border-b border-neutral-200"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
         <Link
+          data-testid="header-logo"
           to="/"
           className="flex items-center gap-2 hover:opacity-70 transition"
         >
@@ -83,6 +87,7 @@ export default function Header() {
 
         <div className="flex gap-6 items-center">
           <a
+            data-testid="header-shop-link"
             href="/"
             className="text-sm text-neutral-600 hover:text-neutral-900 transition"
           >
@@ -92,6 +97,7 @@ export default function Header() {
           {isLoggedIn && (
             <>
               <Link
+                data-testid="header-my-orders-link"
                 to="/orders"
                 className="text-sm text-neutral-600 hover:text-neutral-900 transition"
               >
@@ -99,6 +105,7 @@ export default function Header() {
               </Link>
               <span className="text-neutral-300">|</span>
               <button
+                data-testid="header-logout-button"
                 onClick={handleLogout}
                 className="text-sm text-neutral-600 hover:text-neutral-900 transition flex items-center gap-1"
               >
@@ -111,6 +118,7 @@ export default function Header() {
           {!isLoggedIn && (
             <>
               <Link
+                data-testid="header-login-link"
                 to="/login"
                 className="text-sm text-neutral-600 hover:text-neutral-900 transition"
               >
@@ -121,6 +129,7 @@ export default function Header() {
           )}
 
           <Link
+            data-testid="header-cart-link"
             to="/cart"
             className="text-sm text-neutral-900 font-medium hover:text-amber-600 transition flex items-center gap-1"
           >

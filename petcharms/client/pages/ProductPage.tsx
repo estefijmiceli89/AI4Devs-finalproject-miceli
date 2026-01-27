@@ -314,21 +314,35 @@ export default function ProductPage() {
       {/* Navigation */}
       <Header />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div
+        data-testid="product-page-container"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+      >
         <Link
+          data-testid="back-to-home-link"
           to="/"
           className="text-sm text-neutral-600 hover:text-neutral-900 mb-8 inline-flex items-center gap-1"
         >
           ← Back to home
         </Link>
 
-        <div className="grid md:grid-cols-2 gap-12">
+        <div
+          data-testid="product-page-grid"
+          className="grid md:grid-cols-2 gap-12"
+        >
           {/* Left: Live Preview */}
-          <div>
-            <div className="sticky top-24">
+          <div data-testid="preview-section">
+            <div
+              data-testid="preview-sticky-container"
+              className="sticky top-24"
+            >
               {/* Product Image */}
-              <div className="bg-white rounded-2xl p-4 mb-8 flex items-center justify-center h-full min-h-[350px]">
+              <div
+                data-testid="product-image-container"
+                className="bg-white rounded-2xl p-4 mb-8 flex items-center justify-center h-full min-h-[350px]"
+              >
                 <img
+                  data-testid="product-image"
                   src={product.image_url}
                   alt={product.name}
                   className="w-80 h-80 object-contain rounded-lg"
@@ -336,20 +350,39 @@ export default function ProductPage() {
               </div>
 
               {/* Real-time Preview */}
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 border-2 border-amber-200">
-                <h3 className="font-semibold text-neutral-900 mb-4">
+              <div
+                data-testid="live-preview-section"
+                className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 border-2 border-amber-200"
+              >
+                <h3
+                  data-testid="custom-collar-heading"
+                  className="font-semibold text-neutral-900 mb-4"
+                >
                   🐾 Your Custom Collar
                 </h3>
-                <div className="bg-white rounded-lg p-8 border-2 border-amber-100 flex flex-col items-center justify-center">
+                <div
+                  data-testid="collar-preview-container"
+                  className="bg-white rounded-lg p-8 border-2 border-amber-100 flex flex-col items-center justify-center"
+                >
                   <div className="w-full space-y-6">
                     {/* Collar with Charms Overlaid */}
-                    <div className="flex flex-col items-center gap-3">
+                    <div
+                      data-testid="collar-container"
+                      className="flex flex-col items-center gap-3"
+                    >
                       {/* Relative container for collar + charms */}
-                      <div className="relative w-full h-32 flex items-center justify-center">
+                      <div
+                        data-testid="collar-relative-container"
+                        className="relative w-full h-32 flex items-center justify-center"
+                      >
                         {/* Visual Collar Band */}
-                        <div className="flex flex-col items-center gap-2 w-full absolute top-12">
+                        <div
+                          data-testid="collar-band-container"
+                          className="flex flex-col items-center gap-2 w-full absolute top-12"
+                        >
                           {/* Black base band */}
                           <div
+                            data-testid="collar-band"
                             className="w-full h-8 rounded-full"
                             style={{
                               backgroundColor:
@@ -360,7 +393,10 @@ export default function ProductPage() {
                         </div>
 
                         {/* Charms Overlaid on Collar - In Insertion Order */}
-                        <div className="flex flex-wrap items-center justify-center gap-2 relative z-10 px-3">
+                        <div
+                          data-testid="collar-charms-preview"
+                          className="flex flex-wrap items-center justify-center gap-2 relative z-10 px-3"
+                        >
                           {charms.map((charm, idx) => {
                             if (charm.type === "letter") {
                               const color = colors.find(
@@ -369,6 +405,7 @@ export default function ProductPage() {
                               return (
                                 <span
                                   key={`charm-${idx}`}
+                                  data-testid={`collar-letter-${idx}`}
                                   onClick={() => handleRemoveCharm(idx)}
                                   className="font-bold text-3xl cursor-pointer hover:scale-110 transition transform"
                                   style={{
@@ -386,6 +423,7 @@ export default function ProductPage() {
                               return (
                                 <div
                                   key={`charm-${idx}`}
+                                  data-testid={`collar-shape-${idx}`}
                                   onClick={() => handleRemoveCharm(idx)}
                                   className="text-3xl cursor-pointer hover:scale-110 transition transform"
                                   title={`${shape?.name} - Click to remove`}
@@ -400,23 +438,47 @@ export default function ProductPage() {
                     </div>
 
                     {/* Info below collar */}
-                    <div className="text-center space-y-2">
-                      <p className="text-sm text-neutral-500 italic">
+                    <div
+                      data-testid="collar-info-section"
+                      className="text-center space-y-2"
+                    >
+                      <p
+                        data-testid="collar-tip-text"
+                        className="text-sm text-neutral-500 italic"
+                      >
                         💡 Tip: Click on any charm to remove it
                       </p>
-                      <p className="text-sm font-medium text-neutral-600">
+                      <p
+                        data-testid="collar-color-info"
+                        className="text-sm font-medium text-neutral-600"
+                      >
                         Collar Color:{" "}
-                        <span className="font-bold">
+                        <span
+                          data-testid="collar-color-value"
+                          className="font-bold"
+                        >
                           {
                             COLLAR_COLORS.find((c) => c.id === collarColor)
                               ?.name
                           }
                         </span>
                       </p>
-                      <p className="text-sm font-medium text-neutral-600">
-                        Size: <span className="font-bold">{size}</span>
+                      <p
+                        data-testid="collar-size-info"
+                        className="text-sm font-medium text-neutral-600"
+                      >
+                        Size:{" "}
+                        <span
+                          data-testid="collar-size-value"
+                          className="font-bold"
+                        >
+                          {size}
+                        </span>
                       </p>
-                      <p className="text-sm text-neutral-500">
+                      <p
+                        data-testid="collar-total-charms-info"
+                        className="text-sm text-neutral-500"
+                      >
                         Total: {charms.length}/{MAX_CHARMS} charms
                       </p>
                     </div>
@@ -425,30 +487,48 @@ export default function ProductPage() {
               </div>
 
               {/* Measurements Chart */}
-              <div className="bg-white border-2 border-neutral-200 rounded-xl p-6 mt-8">
-                <h4 className="font-semibold text-neutral-900 mb-4 text-center">
+              <div
+                data-testid="measurements-chart"
+                className="bg-white border-2 border-neutral-200 rounded-xl p-6 mt-8"
+              >
+                <h4
+                  data-testid="measurements-chart-heading"
+                  className="font-semibold text-neutral-900 mb-4 text-center"
+                >
                   TABLA DE MEDIDAS
                 </h4>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center pb-3 border-b border-neutral-200">
+                <div data-testid="measurements-list" className="space-y-3">
+                  <div
+                    data-testid="measurement-size-s"
+                    className="flex justify-between items-center pb-3 border-b border-neutral-200"
+                  >
                     <span className="font-medium text-neutral-900">
                       TALLA S:
                     </span>
                     <span className="text-neutral-600">25-40 cm</span>
                   </div>
-                  <div className="flex justify-between items-center pb-3 border-b border-neutral-200">
+                  <div
+                    data-testid="measurement-size-m"
+                    className="flex justify-between items-center pb-3 border-b border-neutral-200"
+                  >
                     <span className="font-medium text-neutral-900">
                       TALLA M:
                     </span>
                     <span className="text-neutral-600">35-46 cm</span>
                   </div>
-                  <div className="flex justify-between items-center pb-3 border-b border-neutral-200">
+                  <div
+                    data-testid="measurement-size-l"
+                    className="flex justify-between items-center pb-3 border-b border-neutral-200"
+                  >
                     <span className="font-medium text-neutral-900">
                       TALLA L:
                     </span>
                     <span className="text-neutral-600">40-56 cm</span>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div
+                    data-testid="measurement-size-xl"
+                    className="flex justify-between items-center"
+                  >
                     <span className="font-medium text-neutral-900">
                       TALLA XL:
                     </span>
@@ -460,39 +540,61 @@ export default function ProductPage() {
           </div>
 
           {/* Right: Customization Form */}
-          <div>
+          <div data-testid="customization-section">
             {/* Product Info */}
-            <div className="mb-8">
-              <h1 className="text-4xl font-light text-neutral-900 mb-4">
+            <div data-testid="product-info-section" className="mb-8">
+              <h1
+                data-testid="product-name"
+                className="text-4xl font-light text-neutral-900 mb-4"
+              >
                 {product.name}
               </h1>
-              <p className="text-neutral-600 text-lg mb-6">
+              <p
+                data-testid="product-description"
+                className="text-neutral-600 text-lg mb-6"
+              >
                 {product.description}
               </p>
 
               {/* Price Box */}
-              <div className="bg-amber-50 rounded-lg p-6 border border-amber-200 mb-8">
-                <p className="text-sm text-neutral-600 mb-2">
+              <div
+                data-testid="price-box"
+                className="bg-amber-50 rounded-lg p-6 border border-amber-200 mb-8"
+              >
+                <p
+                  data-testid="price-label"
+                  className="text-sm text-neutral-600 mb-2"
+                >
                   Fixed Price (All Options)
                 </p>
-                <p className="text-4xl font-semibold text-amber-700">
+                <p
+                  data-testid="price-value"
+                  className="text-4xl font-semibold text-amber-700"
+                >
                   ${product.price.toFixed(2)}
                 </p>
-                <p className="text-xs text-neutral-500 mt-3">
+                <p
+                  data-testid="price-note"
+                  className="text-xs text-neutral-500 mt-3"
+                >
                   ✓ Same price regardless of letters, shapes, or size
                 </p>
               </div>
             </div>
 
             {/* Size Selector */}
-            <div className="mb-8">
-              <label className="block text-sm font-semibold text-neutral-900 mb-3">
+            <div data-testid="size-selector-section" className="mb-8">
+              <label
+                data-testid="size-selector-label"
+                className="block text-sm font-semibold text-neutral-900 mb-3"
+              >
                 Select Size
               </label>
-              <div className="flex gap-3">
+              <div data-testid="size-buttons-container" className="flex gap-3">
                 {(["S", "M", "L"] as const).map((s) => (
                   <button
                     key={s}
+                    data-testid={`size-${s}-button`}
                     onClick={() => setSize(s)}
                     className={`px-6 py-3 rounded-lg font-medium transition border-2 ${
                       size === s
@@ -508,14 +610,21 @@ export default function ProductPage() {
             </div>
 
             {/* Collar Color Selector */}
-            <div className="mb-8">
-              <label className="block text-sm font-semibold text-neutral-900 mb-3">
+            <div data-testid="collar-color-section" className="mb-8">
+              <label
+                data-testid="collar-color-label"
+                className="block text-sm font-semibold text-neutral-900 mb-3"
+              >
                 Select Collar Color
               </label>
-              <div className="flex flex-wrap gap-2">
+              <div
+                data-testid="collar-color-buttons-container"
+                className="flex flex-wrap gap-2"
+              >
                 {COLLAR_COLORS.map((color) => (
                   <button
                     key={color.id}
+                    data-testid={`collar-color-${color.id}`}
                     onClick={() => setCollarColor(color.id)}
                     className={`w-6 h-6 rounded-full border-2 transition ${
                       collarColor === color.id
@@ -530,11 +639,15 @@ export default function ProductPage() {
             </div>
 
             {/* Pet Name / Letters Section */}
-            <div className="mb-8">
-              <label className="block text-sm font-semibold text-neutral-900 mb-3">
+            <div data-testid="pet-name-section" className="mb-8">
+              <label
+                data-testid="pet-name-label"
+                className="block text-sm font-semibold text-neutral-900 mb-3"
+              >
                 Pet Name (Letters) - Total Max {MAX_CHARMS} Charms
               </label>
               <input
+                data-testid="pet-name-input"
                 type="text"
                 value={petName}
                 onChange={(e) => handlePetNameChange(e.target.value)}
@@ -545,20 +658,31 @@ export default function ProductPage() {
 
               {/* Letter Color Picker */}
               {charms.some((c) => c.type === "letter") && (
-                <div className="space-y-2">
+                <div
+                  data-testid="letter-color-pickers-container"
+                  className="space-y-2"
+                >
                   {charms.map((charm, idx) =>
                     charm.type === "letter" ? (
                       <div
                         key={idx}
+                        data-testid={`letter-color-picker-${idx}`}
                         className="flex items-center justify-between bg-neutral-50 p-3 rounded-lg"
                       >
-                        <span className="font-semibold text-neutral-900 w-12">
+                        <span
+                          data-testid={`letter-display-${idx}`}
+                          className="font-semibold text-neutral-900 w-12"
+                        >
                           {charm.letter}
                         </span>
-                        <div className="flex flex-wrap gap-2">
+                        <div
+                          data-testid={`letter-color-buttons-${idx}`}
+                          className="flex flex-wrap gap-2"
+                        >
                           {colors.map((color) => (
                             <button
                               key={color.id}
+                              data-testid={`letter-${idx}-color-${color.id}`}
                               onClick={() => changeLetterColor(idx, color.id)}
                               className={`w-6 h-6 rounded-full border-2 transition ${
                                 charm.colorId === color.id
@@ -578,18 +702,30 @@ export default function ProductPage() {
             </div>
 
             {/* Shape Charms Section */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-4">
-                <label className="block text-sm font-semibold text-neutral-900">
+            <div data-testid="shape-charms-section" className="mb-8">
+              <div
+                data-testid="shape-charms-header"
+                className="flex items-center justify-between mb-4"
+              >
+                <label
+                  data-testid="shape-charms-label"
+                  className="block text-sm font-semibold text-neutral-900"
+                >
                   Shape Charms (Max {MAX_CHARMS - charms.length})
                 </label>
-                <span className="text-xs font-medium text-neutral-600 bg-neutral-100 px-3 py-1 rounded-full">
+                <span
+                  data-testid="charms-counter"
+                  className="text-xs font-medium text-neutral-600 bg-neutral-100 px-3 py-1 rounded-full"
+                >
                   {totalCharms}/{MAX_CHARMS}
                 </span>
               </div>
 
               {/* Available Shapes */}
-              <div className="grid grid-cols-2 gap-2 mb-4">
+              <div
+                data-testid="shape-charms-grid"
+                className="grid grid-cols-2 gap-2 mb-4"
+              >
                 {shapes.map((shape) => {
                   const isSelected = charms.some(
                     (c) => c.type === "shape" && c.shapeId === shape.id,
@@ -599,6 +735,7 @@ export default function ProductPage() {
                   return (
                     <button
                       key={shape.id}
+                      data-testid={`shape-button-${shape.id}`}
                       onClick={() => handleAddShape(shape.id)}
                       disabled={isDisabled}
                       className={`p-3 rounded-lg border-2 transition ${
@@ -609,8 +746,16 @@ export default function ProductPage() {
                             : "border-neutral-200 hover:border-amber-300 bg-white"
                       }`}
                     >
-                      <div className="text-2xl mb-1">{shape.emoji}</div>
-                      <div className="text-xs font-medium text-neutral-900">
+                      <div
+                        data-testid={`shape-button-emoji-${shape.id}`}
+                        className="text-2xl mb-1"
+                      >
+                        {shape.emoji}
+                      </div>
+                      <div
+                        data-testid={`shape-button-name-${shape.id}`}
+                        className="text-xs font-medium text-neutral-900"
+                      >
                         {shape.name}
                       </div>
                     </button>
@@ -620,22 +765,35 @@ export default function ProductPage() {
 
               {/* Selected Shapes List */}
               {charms.some((c) => c.type === "shape") && (
-                <div className="space-y-2 border-t border-neutral-200 pt-4">
+                <div
+                  data-testid="selected-shapes-list"
+                  className="space-y-2 border-t border-neutral-200 pt-4"
+                >
                   {charms.map((charm, idx) => {
                     if (charm.type !== "shape") return null;
                     const shape = shapes.find((s) => s.id === charm.shapeId);
                     return (
                       <div
                         key={idx}
+                        data-testid={`selected-shape-${idx}`}
                         className="flex items-center justify-between bg-neutral-50 p-3 rounded-lg"
                       >
                         <div className="flex items-center gap-3">
-                          <span className="text-xl">{shape?.emoji}</span>
-                          <span className="text-sm font-medium text-neutral-900">
+                          <span
+                            data-testid={`selected-shape-emoji-${idx}`}
+                            className="text-xl"
+                          >
+                            {shape?.emoji}
+                          </span>
+                          <span
+                            data-testid={`selected-shape-name-${idx}`}
+                            className="text-sm font-medium text-neutral-900"
+                          >
                             {shape?.name}
                           </span>
                         </div>
                         <button
+                          data-testid={`remove-shape-button-${idx}`}
                           onClick={() => handleRemoveCharm(idx)}
                           className="text-red-600 hover:text-red-700 p-1"
                           title="Remove shape"
@@ -651,6 +809,7 @@ export default function ProductPage() {
 
             {/* Add to Cart Button */}
             <button
+              data-testid="add-to-cart-button"
               onClick={handleAddToCart}
               className="w-full px-6 py-4 bg-neutral-900 text-white rounded-lg font-semibold hover:bg-neutral-800 transition flex items-center justify-center gap-2 mb-4"
             >
@@ -659,6 +818,7 @@ export default function ProductPage() {
             </button>
 
             <Link
+              data-testid="back-to-shop-link"
               to="/"
               onClick={handleBackToShop}
               className="w-full px-6 py-3 text-center border border-neutral-300 text-neutral-900 rounded-lg font-medium hover:border-neutral-900 transition"

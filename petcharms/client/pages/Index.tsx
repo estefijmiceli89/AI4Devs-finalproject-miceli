@@ -75,20 +75,27 @@ export default function Index() {
                 </span>
               </div>
 
-              <h1 className="text-5xl md:text-6xl font-light text-neutral-900 mb-6 tracking-tight">
+              <h1
+                data-testid="hero-heading"
+                className="text-5xl md:text-6xl font-light text-neutral-900 mb-6 tracking-tight"
+              >
                 Personalized Collars for{" "}
                 <span className="font-semibold text-amber-600">
                   Furry Friends
                 </span>
               </h1>
 
-              <p className="text-lg text-neutral-600 mb-8 leading-relaxed max-w-md">
+              <p
+                data-testid="hero-description"
+                className="text-lg text-neutral-600 mb-8 leading-relaxed max-w-md"
+              >
                 Create a unique, colorful collar for your pet with custom
                 letters and fun charm shapes. Every collar is made with love.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 w-fit">
                 <Link
+                  data-testid="design-collar-button"
                   to="/product"
                   className="px-8 py-3 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-800 transition inline-flex items-center gap-2"
                 >
@@ -96,6 +103,7 @@ export default function Index() {
                   <ChevronRight className="w-4 h-4" />
                 </Link>
                 <a
+                  data-testid="see-all-charms-button"
                   href="#shapes"
                   className="px-8 py-3 border border-neutral-300 text-neutral-900 rounded-lg font-medium hover:border-neutral-900 transition"
                 >
@@ -105,19 +113,47 @@ export default function Index() {
 
               {/* Stats */}
               <div className="grid grid-cols-3 gap-4 mt-16 pt-16 border-t border-neutral-200">
-                <div>
-                  <p className="text-sm text-neutral-600">Styles</p>
-                  <p className="text-2xl font-semibold text-neutral-900">1</p>
+                <div data-testid="stat-styles">
+                  <p
+                    data-testid="stat-styles-label"
+                    className="text-sm text-neutral-600"
+                  >
+                    Styles
+                  </p>
+                  <p
+                    data-testid="stat-styles-value"
+                    className="text-2xl font-semibold text-neutral-900"
+                  >
+                    1
+                  </p>
                 </div>
-                <div>
-                  <p className="text-sm text-neutral-600">Charm Shapes</p>
-                  <p className="text-2xl font-semibold text-neutral-900">
+                <div data-testid="stat-charm-shapes">
+                  <p
+                    data-testid="stat-charm-shapes-label"
+                    className="text-sm text-neutral-600"
+                  >
+                    Charm Shapes
+                  </p>
+                  <p
+                    data-testid="stat-charm-shapes-value"
+                    className="text-2xl font-semibold text-neutral-900"
+                  >
                     {shapes.length}
                   </p>
                 </div>
-                <div>
-                  <p className="text-sm text-neutral-600">Colors Available</p>
-                  <p className="text-2xl font-semibold text-neutral-900">10</p>
+                <div data-testid="stat-colors-available">
+                  <p
+                    data-testid="stat-colors-available-label"
+                    className="text-sm text-neutral-600"
+                  >
+                    Colors Available
+                  </p>
+                  <p
+                    data-testid="stat-colors-available-value"
+                    className="text-2xl font-semibold text-neutral-900"
+                  >
+                    10
+                  </p>
                 </div>
               </div>
             </div>
@@ -127,6 +163,7 @@ export default function Index() {
               <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-orange-50 rounded-3xl"></div>
               <div className="relative h-full flex items-center justify-center p-8">
                 <img
+                  data-testid="hero-image"
                   src="/woman-with-dog.jpg"
                   alt="Woman with French bulldog wearing personalized collar with DANDY and MOM letters"
                   className="w-full h-full object-cover rounded-xl shadow-lg"
@@ -138,13 +175,23 @@ export default function Index() {
       </section>
 
       {/* Product Section */}
-      <section id="shop" className="py-20 md:py-28 bg-neutral-50">
+      <section
+        id="shop"
+        data-testid="product-section"
+        className="py-20 md:py-28 bg-neutral-50"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-light text-neutral-900 mb-4">
+            <h2
+              data-testid="product-section-heading"
+              className="text-4xl md:text-5xl font-light text-neutral-900 mb-4"
+            >
               Create Your Pet's Unique Look
             </h2>
-            <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
+            <p
+              data-testid="product-section-description"
+              className="text-lg text-neutral-600 max-w-2xl mx-auto"
+            >
               Choose your pet's name as letters and add colorful charm shapes.
               All with a fixed price of just $15!
             </p>
@@ -154,6 +201,7 @@ export default function Index() {
             <div className="grid md:grid-cols-2 gap-12 items-center mb-12">
               <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
                 <img
+                  data-testid="product-image"
                   src={product.image_url}
                   alt={product.name}
                   className="w-full h-96 object-cover"
@@ -161,25 +209,54 @@ export default function Index() {
               </div>
 
               <div>
-                <h3 className="text-3xl font-light text-neutral-900 mb-2">
+                <h3
+                  data-testid="product-name"
+                  className="text-3xl font-light text-neutral-900 mb-2"
+                >
                   {product.name}
                 </h3>
-                <p className="text-neutral-600 mb-6">{product.description}</p>
+                <p
+                  data-testid="product-description"
+                  className="text-neutral-600 mb-6"
+                >
+                  {product.description}
+                </p>
 
-                <div className="bg-amber-50 rounded-lg p-4 mb-8 border border-amber-200">
-                  <p className="text-sm text-neutral-600 mb-1">Fixed Price</p>
-                  <p className="text-3xl font-semibold text-amber-700">
+                <div
+                  data-testid="product-price-box"
+                  className="bg-amber-50 rounded-lg p-4 mb-8 border border-amber-200"
+                >
+                  <p
+                    data-testid="product-price-label"
+                    className="text-sm text-neutral-600 mb-1"
+                  >
+                    Fixed Price
+                  </p>
+                  <p
+                    data-testid="product-price-value"
+                    className="text-3xl font-semibold text-amber-700"
+                  >
                     ${product.price.toFixed(2)}
                   </p>
-                  <ul className="text-xs text-neutral-600 mt-3 space-y-1">
-                    <li>✓ Custom letters with colors</li>
-                    <li>✓ Up to 9 total charm shapes</li>
-                    <li>✓ 10 vibrant colors for letters</li>
-                    <li>✓ 3 sizes (S, M, L)</li>
+                  <ul
+                    data-testid="product-features-list"
+                    className="text-xs text-neutral-600 mt-3 space-y-1"
+                  >
+                    <li data-testid="product-feature-1">
+                      ✓ Custom letters with colors
+                    </li>
+                    <li data-testid="product-feature-2">
+                      ✓ Up to 9 total charm shapes
+                    </li>
+                    <li data-testid="product-feature-3">
+                      ✓ 10 vibrant colors for letters
+                    </li>
+                    <li data-testid="product-feature-4">✓ 3 sizes (S, M, L)</li>
                   </ul>
                 </div>
 
                 <Link
+                  data-testid="product-start-customizing-button"
                   to="/product"
                   className="w-full px-6 py-4 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-800 transition inline-flex items-center justify-center gap-2"
                 >
@@ -187,7 +264,10 @@ export default function Index() {
                   <ChevronRight className="w-4 h-4" />
                 </Link>
 
-                <p className="text-sm text-neutral-500 mt-4 text-center">
+                <p
+                  data-testid="product-footer-text"
+                  className="text-sm text-neutral-500 mt-4 text-center"
+                >
                   Personalize with your pet's name and favorite shapes
                 </p>
               </div>
@@ -204,32 +284,55 @@ export default function Index() {
       </section>
 
       {/* Shapes Showcase Section */}
-      <section id="shapes" className="py-20 md:py-28">
+      <section
+        id="shapes"
+        data-testid="shapes-section"
+        className="py-20 md:py-28"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-light text-neutral-900 mb-4">
+            <h2
+              data-testid="shapes-section-heading"
+              className="text-4xl md:text-5xl font-light text-neutral-900 mb-4"
+            >
               Choose Your Charm Shapes
             </h2>
-            <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
+            <p
+              data-testid="shapes-section-description"
+              className="text-lg text-neutral-600 max-w-2xl mx-auto"
+            >
               Add up to 9 fun charm shapes to your pet's collar. Mix with custom
               letters.
             </p>
           </div>
 
           {shapes.length > 0 && !loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div
+              data-testid="shapes-grid"
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
+            >
               {shapes.map((shape) => (
                 <div
                   key={shape.id}
+                  data-testid={`shape-card-${shape.id}`}
                   className="group bg-white border border-neutral-200 rounded-xl p-6 hover:shadow-md transition text-center"
                 >
-                  <div className="text-5xl mb-4 group-hover:scale-110 transition">
+                  <div
+                    data-testid={`shape-emoji-${shape.id}`}
+                    className="text-5xl mb-4 group-hover:scale-110 transition"
+                  >
                     {shape.emoji}
                   </div>
-                  <h3 className="text-lg font-medium text-neutral-900 mb-1">
+                  <h3
+                    data-testid={`shape-name-${shape.id}`}
+                    className="text-lg font-medium text-neutral-900 mb-1"
+                  >
                     {shape.name}
                   </h3>
-                  <p className="text-xs text-neutral-600">
+                  <p
+                    data-testid={`shape-description-${shape.id}`}
+                    className="text-xs text-neutral-600"
+                  >
                     {shape.description}
                   </p>
                 </div>
@@ -244,6 +347,7 @@ export default function Index() {
 
           <div className="mt-16 text-center">
             <Link
+              data-testid="shapes-start-designing-button"
               to="/product"
               className="inline-flex items-center gap-2 px-8 py-4 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-800 transition"
             >
@@ -255,43 +359,64 @@ export default function Index() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 md:py-28 bg-neutral-50">
+      <section
+        data-testid="features-section"
+        className="py-20 md:py-28 bg-neutral-50"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-12">
-            <div>
+            <div data-testid="feature-fully-customizable">
               <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-4">
                 <span className="text-xl">🎨</span>
               </div>
-              <h3 className="text-xl font-semibold text-neutral-900 mb-2">
+              <h3
+                data-testid="feature-fully-customizable-title"
+                className="text-xl font-semibold text-neutral-900 mb-2"
+              >
                 Fully Customizable
               </h3>
-              <p className="text-neutral-600">
+              <p
+                data-testid="feature-fully-customizable-description"
+                className="text-neutral-600"
+              >
                 Add your pet's name with colored letters and choose from 35+
                 charm shapes.
               </p>
             </div>
 
-            <div>
+            <div data-testid="feature-fixed-pricing">
               <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-4">
                 <span className="text-xl">💰</span>
               </div>
-              <h3 className="text-xl font-semibold text-neutral-900 mb-2">
+              <h3
+                data-testid="feature-fixed-pricing-title"
+                className="text-xl font-semibold text-neutral-900 mb-2"
+              >
                 Fixed Pricing
               </h3>
-              <p className="text-neutral-600">
+              <p
+                data-testid="feature-fixed-pricing-description"
+                className="text-neutral-600"
+              >
                 One price for all options. No matter how many charms or which
                 size you choose.
               </p>
             </div>
 
-            <div>
+            <div data-testid="feature-made-with-love">
               <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-4">
                 <span className="text-xl">❤️</span>
               </div>
-              <h3 className="text-xl font-semibold text-neutral-900 mb-2">
+              <h3
+                data-testid="feature-made-with-love-title"
+                className="text-xl font-semibold text-neutral-900 mb-2"
+              >
                 Made with Love
               </h3>
-              <p className="text-neutral-600">
+              <p
+                data-testid="feature-made-with-love-description"
+                className="text-neutral-600"
+              >
                 Quality collars designed to make your pet look amazing and feel
                 comfortable.
               </p>
@@ -301,15 +426,22 @@ export default function Index() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 md:py-28">
+      <section data-testid="cta-section" className="py-20 md:py-28">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-light text-neutral-900 mb-6">
+          <h2
+            data-testid="cta-section-heading"
+            className="text-4xl md:text-5xl font-light text-neutral-900 mb-6"
+          >
             Ready to make your pet shine?
           </h2>
-          <p className="text-lg text-neutral-600 mb-8 max-w-2xl mx-auto">
+          <p
+            data-testid="cta-section-description"
+            className="text-lg text-neutral-600 mb-8 max-w-2xl mx-auto"
+          >
             Create a custom collar that shows off your pet's unique personality.
           </p>
           <Link
+            data-testid="cta-design-your-collar-button"
             to="/product"
             className="inline-flex items-center gap-2 px-8 py-4 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-800 transition"
           >
