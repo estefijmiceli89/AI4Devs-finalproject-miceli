@@ -89,17 +89,27 @@ export default function CartPage() {
         </h1>
 
         {cart.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="inline-block w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
+          <div data-testid="empty-cart-container" className="text-center py-16">
+            <div
+              data-testid="empty-cart-icon"
+              className="inline-block w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mb-4"
+            >
               <Sparkles className="w-8 h-8 text-neutral-400" />
             </div>
-            <h2 className="text-xl font-semibold text-neutral-900 mb-2">
+            <h2
+              data-testid="empty-cart-message"
+              className="text-xl font-semibold text-neutral-900 mb-2"
+            >
               Your cart is empty
             </h2>
-            <p className="text-neutral-600 mb-6">
+            <p
+              data-testid="empty-cart-description"
+              className="text-neutral-600 mb-6"
+            >
               Start designing a custom collar for your pet
             </p>
             <Link
+              data-testid="design-now-button"
               to="/product"
               className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition"
             >
@@ -114,6 +124,7 @@ export default function CartPage() {
               {cart.map((item, index) => (
                 <div
                   key={index}
+                  data-testid={`cart-item-container-${index}`}
                   className="bg-white border border-neutral-200 rounded-lg p-6 hover:shadow-md transition"
                 >
                   <div className="flex justify-between items-start mb-4">
@@ -128,7 +139,10 @@ export default function CartPage() {
                             <p className="text-xs font-medium text-neutral-600">
                               Pet Name:
                             </p>
-                            <p className="text-sm font-semibold text-neutral-900">
+                            <p
+                              data-testid={`cart-item-${index}-pet-name`}
+                              className="text-sm font-semibold text-neutral-900"
+                            >
                               {item.petName}
                             </p>
                           </div>
@@ -137,7 +151,13 @@ export default function CartPage() {
                         {/* Size */}
                         <div>
                           <p className="text-xs font-medium text-neutral-600">
-                            Size: <span className="font-bold">{item.size}</span>
+                            Size:{" "}
+                            <span
+                              data-testid={`cart-item-${index}-size`}
+                              className="font-bold"
+                            >
+                              {item.size}
+                            </span>
                           </p>
                         </div>
 
@@ -149,6 +169,7 @@ export default function CartPage() {
                             </p>
                             <div className="flex items-center gap-2">
                               <div
+                                data-testid={`cart-item-${index}-collar-color-swatch`}
                                 className="w-6 h-6 rounded-full border-2 border-neutral-300"
                                 style={{
                                   backgroundColor:
@@ -165,7 +186,10 @@ export default function CartPage() {
                                     }[item.collarColor] || "#DC2626",
                                 }}
                               />
-                              <span className="text-sm font-semibold text-neutral-900">
+                              <span
+                                data-testid={`cart-item-${index}-collar-color`}
+                                className="text-sm font-semibold text-neutral-900"
+                              >
                                 {item.collarColor
                                   .replace("collar-", "")
                                   .charAt(0)
@@ -203,6 +227,7 @@ export default function CartPage() {
                       </div>
                     </div>
                     <button
+                      data-testid={`cart-item-${index}-delete-button`}
                       onClick={() => handleRemoveItem(index)}
                       className="text-neutral-400 hover:text-red-600 transition p-2"
                       title="Remove from cart"
@@ -224,14 +249,19 @@ export default function CartPage() {
             {/* Order Summary */}
             <div className="lg:col-span-1">
               <div className="bg-neutral-50 rounded-lg p-6 border border-neutral-200 sticky top-24">
-                <h3 className="text-lg font-semibold text-neutral-900 mb-6">
+                <h3
+                  data-testid="order-summary-heading"
+                  className="text-lg font-semibold text-neutral-900 mb-6"
+                >
                   Order Summary
                 </h3>
 
                 <div className="space-y-3 mb-6 pb-6 border-b border-neutral-200">
                   <div className="flex justify-between text-neutral-600">
                     <span>Subtotal</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span data-testid="order-subtotal">
+                      ${totalPrice.toFixed(2)}
+                    </span>
                   </div>
                   <div className="flex justify-between text-neutral-600">
                     <span>Shipping</span>
@@ -241,12 +271,16 @@ export default function CartPage() {
 
                 <div className="flex justify-between items-center mb-6">
                   <span className="font-semibold text-neutral-900">Total</span>
-                  <span className="text-2xl font-bold text-amber-700">
+                  <span
+                    data-testid="order-total"
+                    className="text-2xl font-bold text-amber-700"
+                  >
                     ${totalPrice.toFixed(2)}
                   </span>
                 </div>
 
                 <button
+                  data-testid="proceed-to-checkout-button"
                   onClick={handleProceedToCheckout}
                   className="w-full px-6 py-3 bg-neutral-900 text-white rounded-lg font-semibold hover:bg-neutral-800 transition flex items-center justify-center gap-2 mb-3"
                 >
@@ -255,6 +289,7 @@ export default function CartPage() {
                 </button>
 
                 <button
+                  data-testid="clear-cart-button"
                   onClick={handleClearCart}
                   className="w-full px-6 py-3 border border-neutral-300 text-neutral-900 rounded-lg font-medium hover:border-neutral-900 transition"
                 >

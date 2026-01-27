@@ -445,6 +445,11 @@ test.describe("Product Page", () => {
   test("should add item to cart and verify correct size and color information", async ({
     page,
   }) => {
+    // Clear cart before starting
+    await page.evaluate(() => {
+      localStorage.setItem("cart", "[]");
+    });
+
     // Wait for product data to load
     await expect(productPage.productName).toBeVisible();
 
@@ -499,12 +504,16 @@ test.describe("Product Page", () => {
     const cartPage = new CartPage(page);
     await expect(cartPage.orderSummary).toBeVisible();
 
-    // Verify size L is displayed in cart
-    await expect(page.getByText(/Size:/)).toBeVisible();
-    await expect(page.getByText(/Size:.*L/i)).toBeVisible();
+    // Verify size L is displayed in cart (first cart item, index 0)
+    await expect(cartPage.getCartItemSize(0)).toBeVisible();
+    await expect(cartPage.getCartItemSize(0)).toHaveText("L");
 
     // Verify collar color Blue is displayed in cart
-    await expect(page.getByText(/Collar Color:/i)).toBeVisible();
-    await expect(page.getByText(/Blue/i)).toBeVisible();
+    await expect(cartPage.getCartItemCollarColor(0)).toBeVisible();
+    await expect(cartPage.getCartItemCollarColor(0)).toHaveText("Blue");
+
+    // Verify pet name LUNA is displayed in cart
+    await expect(cartPage.getCartItemPetName(0)).toBeVisible();
+    await expect(cartPage.getCartItemPetName(0)).toHaveText(testPetName);
   });
 });

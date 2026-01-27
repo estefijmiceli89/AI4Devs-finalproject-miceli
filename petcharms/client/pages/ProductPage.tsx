@@ -210,12 +210,18 @@ export default function ProductPage() {
     const letters = charms.filter((c) => c.type === "letter") as LetterCharm[];
     const shapes = charms.filter((c) => c.type === "shape") as ShapeCharm[];
 
+    // Build pet name from letters if available, otherwise use petName input, fallback to "Custom"
+    const finalPetName =
+      letters.length > 0
+        ? letters.map((l) => l.letter).join("")
+        : petName.trim() || "Custom";
+
     const cartItem = {
       product_id: product.id,
       product_name: product.name,
       size,
       collarColor,
-      petName: petName || "Custom",
+      petName: finalPetName,
       customizations: {
         letters,
         shapes,
@@ -230,7 +236,7 @@ export default function ProductPage() {
 
     toast({
       title: "Added to cart!",
-      description: `Pet collar for ${petName || "your pet"} added to cart.`,
+      description: `Pet collar for ${finalPetName} added to cart.`,
     });
 
     // Reset

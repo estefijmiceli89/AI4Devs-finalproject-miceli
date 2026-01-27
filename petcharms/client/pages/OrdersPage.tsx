@@ -120,7 +120,10 @@ export default function OrdersPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-light text-neutral-900 mb-2">
+          <h1
+            data-testid="orders-page-heading"
+            className="text-4xl font-light text-neutral-900 mb-2"
+          >
             My Orders
           </h1>
           <p className="text-neutral-600">
@@ -143,18 +146,25 @@ export default function OrdersPage() {
             </Link>
           </div>
         ) : (
-          <div className="space-y-4">
-            {orders.map((order) => (
+          <div data-testid="orders-list" className="space-y-4">
+            {orders.map((order, index) => (
               <div
                 key={order.id}
+                data-testid={`orders-order-card-${index}`}
                 className="border border-neutral-200 rounded-lg p-6 hover:border-amber-600 transition"
               >
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
                   <div>
-                    <h3 className="text-lg font-semibold text-neutral-900">
+                    <h3
+                      data-testid={`orders-order-card-${index}-pet-name`}
+                      className="text-lg font-semibold text-neutral-900"
+                    >
                       {order.pet_name}
                     </h3>
-                    <p className="text-sm text-neutral-600">
+                    <p
+                      data-testid={`orders-order-card-${index}-order-id`}
+                      className="text-sm text-neutral-600"
+                    >
                       Order ID: {order.id.slice(0, 8)}...
                     </p>
                   </div>
@@ -173,7 +183,10 @@ export default function OrdersPage() {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <p className="text-xs text-neutral-600">Size</p>
-                      <p className="font-semibold text-neutral-900">
+                      <p
+                        data-testid={`orders-order-card-${index}-size`}
+                        className="font-semibold text-neutral-900"
+                      >
                         {order.size}
                       </p>
                     </div>
@@ -186,7 +199,10 @@ export default function OrdersPage() {
                             backgroundColor: order.collar_color,
                           }}
                         />
-                        <span className="text-sm font-medium text-neutral-900">
+                        <span
+                          data-testid={`orders-order-card-${index}-collar-color`}
+                          className="text-sm font-medium text-neutral-900"
+                        >
                           {order.collar_color}
                         </span>
                       </div>

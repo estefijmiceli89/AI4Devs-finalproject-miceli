@@ -189,6 +189,7 @@ export default function CheckoutPage() {
           orderId: orderData?.id,
           customerName: formData.fullName,
           customerEmail: formData.email,
+          customerAddress: formData.address,
           cart: cart,
           total: totalPrice,
           createdAt: new Date().toISOString(),
@@ -235,6 +236,7 @@ export default function CheckoutPage() {
           </Link>
           <div className="flex gap-4">
             <Link
+              data-testid="checkout-back-to-cart-link"
               to="/cart"
               className="text-sm text-neutral-600 hover:text-neutral-900"
             >
@@ -245,7 +247,12 @@ export default function CheckoutPage() {
       </nav>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-4xl font-light text-neutral-900 mb-12">Checkout</h1>
+        <h1
+          data-testid="checkout-heading"
+          className="text-4xl font-light text-neutral-900 mb-12"
+        >
+          Checkout
+        </h1>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Checkout Form */}
@@ -257,6 +264,7 @@ export default function CheckoutPage() {
                   Full Name *
                 </label>
                 <input
+                  data-testid="checkout-full-name-input"
                   type="text"
                   required
                   value={formData.fullName}
@@ -283,6 +291,7 @@ export default function CheckoutPage() {
                   Email *
                 </label>
                 <input
+                  data-testid="checkout-email-input"
                   type="email"
                   required
                   value={formData.email}
@@ -309,6 +318,7 @@ export default function CheckoutPage() {
                   Shipping Address *
                 </label>
                 <textarea
+                  data-testid="checkout-address-input"
                   required
                   value={formData.address}
                   onChange={(e) =>
@@ -335,6 +345,7 @@ export default function CheckoutPage() {
                   Phone (Optional)
                 </label>
                 <input
+                  data-testid="checkout-phone-input"
                   type="tel"
                   value={formData.phone}
                   onChange={(e) =>
@@ -356,6 +367,7 @@ export default function CheckoutPage() {
 
               {/* Submit Button */}
               <button
+                data-testid="checkout-confirm-order-button"
                 type="submit"
                 disabled={submitting}
                 className="w-full px-6 py-4 bg-neutral-900 text-white rounded-lg font-semibold hover:bg-neutral-800 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
@@ -369,19 +381,45 @@ export default function CheckoutPage() {
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-neutral-50 rounded-lg p-6 border border-neutral-200 sticky top-24">
-              <h3 className="text-lg font-semibold text-neutral-900 mb-6">
+              <h3
+                data-testid="checkout-order-summary-heading"
+                className="text-lg font-semibold text-neutral-900 mb-6"
+              >
                 Order Summary
               </h3>
 
               <div className="space-y-3 mb-6 pb-6 border-b border-neutral-200">
                 {cart.map((item, index) => (
-                  <div key={index}>
-                    <p className="font-medium text-neutral-900 mb-2">
+                  <div key={index} data-testid={`checkout-order-item-${index}`}>
+                    <p
+                      data-testid={`checkout-order-item-${index}-product-name`}
+                      className="font-medium text-neutral-900 mb-2"
+                    >
                       {item.product_name}
                     </p>
                     <div className="space-y-1 text-xs text-neutral-600 mb-3">
-                      {item.petName && <p>Pet Name: {item.petName}</p>}
-                      <p>Size: {item.size}</p>
+                      {item.petName && (
+                        <p
+                          data-testid={`checkout-order-item-${index}-pet-name`}
+                        >
+                          Pet Name: {item.petName}
+                        </p>
+                      )}
+                      <p data-testid={`checkout-order-item-${index}-size`}>
+                        Size: {item.size}
+                      </p>
+                      {item.collarColor && (
+                        <p
+                          data-testid={`checkout-order-item-${index}-collar-color`}
+                        >
+                          Collar Color:{" "}
+                          {item.collarColor
+                            .replace("collar-", "")
+                            .charAt(0)
+                            .toUpperCase() +
+                            item.collarColor.replace("collar-", "").slice(1)}
+                        </p>
+                      )}
                       {item.customizations.letters.length > 0 && (
                         <p>Letters: {item.customizations.letters.length}</p>
                       )}
@@ -398,7 +436,10 @@ export default function CheckoutPage() {
 
               <div className="flex justify-between items-center mb-6">
                 <span className="font-semibold text-neutral-900">Total</span>
-                <span className="text-2xl font-bold text-amber-700">
+                <span
+                  data-testid="checkout-order-total"
+                  className="text-2xl font-bold text-amber-700"
+                >
                   ${totalPrice.toFixed(2)}
                 </span>
               </div>
