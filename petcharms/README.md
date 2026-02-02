@@ -14,8 +14,13 @@
 6. [Diseño de API REST](#6-diseño-de-api-rest)
 7. [Diseño Frontend](#7-diseño-frontend)
 8. [Plan de Testing](#8-plan-de-testing)
+   - [Testing Implementado](#-testing-implementado) - Estructura, frameworks, comandos y cobertura
 9. [CI/CD Pipeline](#9-cicd-pipeline)
-10. [🚀 Despliegue y Producción](#10--despliegue-y-producción)
+   - [GitHub Actions Implementado](#-github-actions---implementacion-real) - Jobs, pre-commit hooks, comandos
+10. [Despliegue y Producción](#10--despliegue-y-producción)
+    - [Netlify Functions](#-netlify-functions-serverless-api) - API serverless
+    - [Troubleshooting](#️-troubleshooting-de-despliegue) - Problemas comunes
+    - [Resumen de Infraestructura](#-resumen-de-infraestructura)
 11. [Registro del Uso de IA](#11-registro-del-uso-de-ia)
 
 ---
@@ -1729,144 +1734,98 @@ El proyecto usa shadcn/ui, una colección de componentes reutilizables construid
 
 ---
 
-## 8. Plan de Testing
+### 🧪 Testing Implementado
 
-### 🏛️ Pirámide de Testing (2024–2025 Best Practice)
+#### **Estructura de Tests**
 
 ```
-        /\
-       /  \  E2E (Playwright) - 10%
-      /____\  "User journey": landing → product → cart → order
-
-     /      \
-    / Integ. \ Integration Tests - 30%
-   /  Tests   \ "API contracts": endpoint call + response validation
-  /____________\
-
- /              \
-/ Unit Tests    \ Unit Tests - 60%
-/  (Vitest)      \ "Individual functions": calculatePrice(), validateOrder()
-/__________________\
+tests/
+├── setup.ts                          # Setup global (mocks de localStorage, matchMedia, env vars)
+├── unit/
+│   ├── server/routes/
+│   │   ├── ping.spec.ts              # Tests del endpoint /api/ping
+│   │   ├── products.spec.ts          # Tests del endpoint /api/v1/products
+│   │   └── shapes.spec.ts            # Tests del endpoint /api/v1/shapes y /api/v1/colors
+│   └── pages/
+│       ├── CheckoutPage.spec.tsx     # Tests del componente CheckoutPage
+│       ├── OrdersPage.spec.tsx       # Tests del componente OrdersPage
+│       ├── LoginPage.spec.tsx        # Tests del componente LoginPage
+│       └── RegisterPage.spec.tsx     # Tests del componente RegisterPage
+├── integration/
+│   └── api/
+│       ├── ping.spec.ts              # Test de integracion endpoint ping
+│       ├── products.spec.ts          # Test de integracion endpoint products
+│       ├── shapes.spec.ts            # Test de integracion endpoint shapes
+│       └── colors.spec.ts            # Test de integracion endpoint colors
+└── e2e/
+    ├── auth.setup.ts                 # Setup de autenticacion para E2E
+    ├── auth.spec.ts                  # Flujos de autenticacion (login/register)
+    ├── landing-page.spec.ts          # Tests de landing page
+    ├── product-page.spec.ts          # Tests de personalizacion de producto
+    ├── cart-page.spec.ts             # Tests del carrito de compras
+    ├── checkout-page.spec.ts         # Tests del proceso de checkout
+    ├── purchase-flow.spec.ts         # Flujo completo de compra E2E
+    └── order-confirmation-page.spec.ts # Tests de confirmacion de orden
 ```
 
-### 📝 Qué va en Cada Nivel
+**Total: 18 archivos de test** (7 unit + 4 integration + 7 E2E)
 
-#### **Unit Tests (60%)**
+#### **Frameworks y Configuracion**
 
-Testean funciones aisladas sin dependencias externas.
+| Nivel       | Framework       | Entorno  | Config                         |
+| ----------- | --------------- | -------- | ------------------------------ |
+| Unit        | Vitest 3.2.4    | jsdom    | `vitest.config.ts`             |
+| Integration | Vitest 3.2.4    | node     | `vitest.integration.config.ts` |
+| E2E         | Playwright 1.48 | Chromium | `playwright.config.ts`         |
 
-**Qué testear:**
+#### **Comandos de Test**
 
-- Funciones de utilidad (cálculo de precios, validaciones, formateo)
-- Lógica de negocio pura (sin llamadas a API o base de datos)
-- Componentes React aislados (con mocks de props)
-- Validaciones de esquemas Zod
-- Funciones de transformación de datos
+```bash
+# Tests unitarios
+pnpm test:unit
 
-**Ejemplos de casos:**
+# Tests de integracion
+pnpm test:integration
 
-- Calcular precio total correctamente (producto + charms)
-- Manejar casos edge (charms vacíos, precios negativos)
-- Validar formato de UUIDs
-- Formatear fechas y monedas
+# Tests E2E (headless)
+pnpm test:e2e
 
-#### **Integration Tests (30%)**
+# Tests E2E con navegador visible
+pnpm test:e2e:headed
 
-Testean múltiples componentes trabajando juntos (sin UI).
+# Tests E2E con interfaz de Playwright
+pnpm test:e2e:ui
 
-**Qué testear:**
+# Ejecutar TODOS los tests (unit + integration + E2E)
+pnpm test:all
 
-- Endpoints API completos (request → validación → respuesta)
-- Integración entre rutas Express y handlers
-- Validación de esquemas Zod en requests reales
-- Manejo de errores en endpoints
-- Respuestas con formato correcto
+# Modo watch (desarrollo)
+pnpm test:watch
 
-**Ejemplos de casos:**
+# Dashboard visual de Vitest
+pnpm test:ui
 
-- Crear orden con datos válidos retorna 200 y orden creada
-- Rechazar orden con IDs inválidos retorna 400
-- Validar que todos los campos requeridos están presentes
-- Verificar formato de respuesta (success, data, error)
-- Testear casos de error (producto no existe, validación falla)
+# Reporte de cobertura (unit + integration)
+pnpm test:coverage
+```
 
-#### **E2E Tests (10%)**
+#### **Cobertura de Codigo**
 
-Testean el flujo completo con Playwright (usuario interactúa con UI).
+- **Provider:** V8
+- **Umbrales minimos:** 80% en branches, functions, lines y statements
+- **Reportes:** text (consola), JSON, HTML
+- **Comando:** `pnpm test:coverage`
 
-**Qué testear:**
+#### **Configuracion de Playwright (E2E)**
 
-- Flujos completos de usuario (happy paths)
-- Navegación entre páginas
-- Interacciones de usuario (clicks, formularios, selecciones)
-- Estados de la UI (loading, error, success)
-- Persistencia de datos (localStorage, carrito)
-
-**Ejemplos de casos:**
-
-- Flujo completo: Landing → Product → Cart → Checkout → Confirmation
-- Verificar que el carrito persiste entre páginas
-- Validar que los datos se muestran correctamente en cada paso
-- Testear formularios (validación, envío, errores)
-- Verificar redirecciones y navegación
-
-### 🧪 Test Scenarios por Feature
-
-#### **US-001: Ver Producto**
-
-**Casos a testear:**
-
-- Product page carga y muestra datos correctamente (Unit: componente renderiza, Integration: API retorna datos, E2E: usuario ve imagen, título, precio)
-- Manejar imagen faltante gracefully (Unit: fallback image funciona, Integration: 404 image muestra placeholder, E2E: placeholder renderiza sin layout shift)
-
-#### **US-002: Seleccionar Charms**
-
-**Casos a testear:**
-
-- Calcular precio en tiempo real (Unit: calculatePrice() suma correctamente, Integration: selección de charm actualiza precio, E2E: usuario ve cambio de precio al seleccionar)
-- Manejar 0 charms seleccionados (Unit: calculatePrice con array vacío = precio producto, Integration: orden puede crearse sin charms, E2E: usuario puede hacer checkout sin charms)
-
-#### **US-005: Crear Orden**
-
-**Casos a testear:**
-
-- Crear orden con datos correctos (Unit: validación de datos del carrito pasa, Integration: Supabase inserta orden correctamente, E2E: página de confirmación muestra número de orden)
-- Prevenir órdenes duplicadas (debounce) (Unit: función debounce funciona, Integration: segundo insert es ignorado, E2E: doble click en submit solo crea 1 orden)
-
-### 🚨 Escenarios Negativos (Muy Importante)
-
-**Validación:**
-
-- Rechazar orden con UUID inválido (debe lanzar error "Invalid UUID format")
-- Rechazar campos faltantes o tipos incorrectos
-- Validar límites de caracteres en campos de texto
-
-**Límites:**
-
-- Manejar selecciones muy grandes de charms (1000+ charms)
-- Verificar que el sistema no se rompe con datos extremos
-- Testear límites de memoria y rendimiento
-
-**Concurrencia:**
-
-- Manejar órdenes simultáneas sin conflictos (10+ órdenes al mismo tiempo)
-- Verificar que todos los IDs generados son únicos
-- Testear race conditions en creación de órdenes
-
-**Errores de API:**
-
-- Manejar errores 500 gracefully (mostrar mensaje amigable al usuario)
-- Manejar timeouts de red
-- Manejar respuestas inesperadas del servidor
-
-### 📊 Criterios de Salida (Definition of Done para Testing)
-
-- [ ] > 70% test coverage (unit + integration + E2E)
-- [ ] 0 critical bugs in manual testing
-- [ ] All E2E scenarios pass
-- [ ] Performance: page load < 3s (Lighthouse)
-- [ ] Accessibility: WCAG AA passed
-- [ ] No console errors/warnings
+- **Navegador:** Chromium (Desktop Chrome)
+- **Base URL:** `http://localhost:8080`
+- **Paralelismo:** Habilitado en local, 1 worker en CI
+- **Reintentos:** 0 en local, 2 en CI
+- **Tracing:** Habilitado en primer reintento
+- **Web Server:** Inicia automaticamente `pnpm dev` antes de ejecutar tests
+- **Setup de Auth:** `auth.setup.ts` se ejecuta antes de los tests que requieren autenticacion
+- **Variables de entorno E2E:** Configuradas en `.env.e2e.local` (email y password de test)
 
 ---
 
@@ -1929,6 +1888,78 @@ Testean el flujo completo con Playwright (usuario interactúa con UI).
 │ (Netlify/Vercel main)   │
 │ Auto-deploy live site   │
 └─────────────────────────┘
+```
+
+### 🔧 GitHub Actions - Implementacion Real
+
+**Archivo:** `.github/workflows/test.yml`
+
+#### **Eventos que disparan el pipeline:**
+
+- **Push** a las ramas `main` o `estefaniaMiceli`
+- **Pull Request** hacia las ramas `main` o `estefaniaMiceli`
+- **Dispatch manual** (workflow_dispatch)
+
+#### **Jobs del Pipeline**
+
+Todos los jobs corren en `ubuntu-latest` con Node.js 20 y pnpm 10.14.0. Despues del job `install`, los demas jobs se ejecutan **en paralelo**:
+
+```mermaid
+graph LR
+    Install["install<br/>pnpm install --frozen-lockfile"]
+    Install --> Typecheck["typecheck<br/>pnpm typecheck"]
+    Install --> Lint["lint<br/>pnpm lint + pnpm format"]
+    Install --> Unit["unit<br/>pnpm test:unit"]
+    Install --> Integration["integration<br/>pnpm test:integration"]
+    Install --> E2E["e2e<br/>pnpm test:e2e"]
+```
+
+| Job             | Descripcion                                   | Comando principal                |
+| --------------- | --------------------------------------------- | -------------------------------- |
+| **install**     | Instala dependencias con lockfile congelado   | `pnpm install --frozen-lockfile` |
+| **typecheck**   | Validacion de tipos TypeScript                | `pnpm typecheck`                 |
+| **lint**        | ESLint + verificacion de formato con Prettier | `pnpm lint` + `pnpm format`      |
+| **unit**        | Tests unitarios (Vitest + jsdom)              | `pnpm test:unit`                 |
+| **integration** | Tests de integracion (Vitest + node)          | `pnpm test:integration`          |
+| **e2e**         | Tests E2E con Playwright (Chromium)           | `pnpm test:e2e`                  |
+
+#### **Configuracion E2E en CI**
+
+El job de E2E tiene configuracion especial para CI:
+
+- Instala navegador Chromium con `pnpm playwright:install`
+- Usa secrets de GitHub para credenciales de test: `E2E_TEST_EMAIL` y `E2E_TEST_PASSWORD`
+- Ejecuta con 1 worker y 2 reintentos (configurado en `playwright.config.ts`)
+
+#### **Pre-commit Hooks (Husky + lint-staged)**
+
+Antes de cada commit, Husky ejecuta lint-staged que:
+
+- Archivos `*.{ts,tsx,js,jsx}`: ejecuta `eslint --fix` y `prettier --write`
+- Archivos `*.{json,css,md,yml,yaml}`: ejecuta `prettier --write`
+
+**Configuracion en `.lintstagedrc.json`:**
+
+```json
+{
+  "*.{ts,tsx,js,jsx}": ["eslint --fix", "prettier --write"],
+  "*.{json,css,md,yml,yaml}": ["prettier --write"]
+}
+```
+
+### 📋 Comandos de Calidad de Codigo
+
+```bash
+# Linting
+pnpm lint              # Verificar errores de ESLint
+pnpm lint:fix          # Corregir errores automaticamente
+
+# Formateo
+pnpm format            # Verificar formato (Prettier)
+pnpm format:fix        # Corregir formato automaticamente
+
+# Type checking
+pnpm typecheck         # Verificar tipos TypeScript (tsc)
 ```
 
 ---
@@ -2020,12 +2051,75 @@ netlify deploy --prod
 # O usando el dashboard web de Netlify
 ```
 
+### ⚡ Netlify Functions (Serverless API)
+
+El backend Express se ejecuta como Netlify Function usando `serverless-http`:
+
+**Archivo:** `netlify/functions/api.ts`
+
+```typescript
+import serverless from "serverless-http";
+import { createServer } from "../../server";
+
+const app = createServer();
+
+export const handler = serverless(app, {
+  binary: ["image/*", "application/json"],
+});
+```
+
+**Como funciona:**
+
+1. Netlify detecta automaticamente los archivos en `netlify/functions/`
+2. `serverless-http` envuelve la app Express para funcionar como Lambda
+3. El redirect en `netlify.toml` envia todos los requests `/api/*` a `/.netlify/functions/api`
+4. La misma logica de Express que corre en desarrollo funciona en produccion
+
+**Plugin de pnpm:**
+El archivo `netlify/plugins.json` incluye `netlify-plugin-pnpm` (v1.0.10) para soporte nativo de pnpm en el build de Netlify.
+
 ### 🔐 Seguridad
 
-- **HTTPS:** Habilitado automáticamente por Netlify
-- **CORS:** Configurado en Express para permitir requests desde el dominio de producción
+- **HTTPS:** Habilitado automaticamente por Netlify
+- **CORS:** Configurado en Express para permitir requests desde el dominio de produccion
 - **Environment Variables:** Secrets almacenados de forma segura en Netlify Dashboard
 - **Supabase RLS:** Row Level Security configurado en Supabase para proteger datos
+
+### 🛠️ Troubleshooting de Despliegue
+
+| Problema               | Causa                          | Solucion                                                                       |
+| ---------------------- | ------------------------------ | ------------------------------------------------------------------------------ |
+| Build falla en Netlify | Version de Node incorrecta     | Verificar que `NODE_VERSION=20` esta configurado en Netlify                    |
+| API retorna 404        | Redirects no configurados      | Verificar que `netlify.toml` tiene los redirects correctos                     |
+| Supabase no conecta    | Variables de entorno faltantes | Configurar `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en Netlify Dashboard |
+| pnpm no reconocido     | Plugin faltante                | Verificar que `netlify/plugins.json` incluye `netlify-plugin-pnpm`             |
+| SPA rutas 404          | Fallback no configurado        | El redirect `/* -> /index.html` en `netlify.toml` maneja esto                  |
+| E2E tests fallan en CI | Secrets no configurados        | Agregar `E2E_TEST_EMAIL` y `E2E_TEST_PASSWORD` en GitHub Secrets               |
+
+### 📊 Resumen de Infraestructura
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   PRODUCCION                         │
+├─────────────────────────────────────────────────────┤
+│  Frontend:  Netlify CDN (dist/spa/)                 │
+│  Backend:   Netlify Functions (serverless-http)     │
+│  Database:  Supabase PostgreSQL                     │
+│  Auth:      Supabase Auth                           │
+│  CI/CD:     GitHub Actions (6 jobs en paralelo)     │
+│  Dominio:   petcharmslovers.netlify.app             │
+└─────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────┐
+│                   DESARROLLO                         │
+├─────────────────────────────────────────────────────┤
+│  Frontend:  Vite Dev Server (puerto 8080)           │
+│  Backend:   Express middleware integrado con Vite   │
+│  Database:  Supabase PostgreSQL (mismo que prod)    │
+│  Testing:   Vitest (unit/integration) + Playwright  │
+│  Linting:   ESLint + Prettier + Husky pre-commit   │
+└─────────────────────────────────────────────────────┘
+```
 
 ---
 
